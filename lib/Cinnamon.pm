@@ -2,9 +2,22 @@ package Cinnamon;
 use strict;
 use warnings;
 use 5.008008;
+
 our $VERSION = '0.01';
 
+use Cinnamon::Config ();
+use Cinnamon::Runner;
 
+sub run {
+    my ($class, $role, $task, @args) = @_;
+
+    Cinnamon::Config::set(role => $role);
+    Cinnamon::Config::set(task => $task);
+
+    for my $host (@{Cinnamon::Config::hosts || []}) {
+        Cinnamon::Runner->start($host, @args);
+    }
+}
 
 1;
 __END__

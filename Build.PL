@@ -14,6 +14,9 @@ my $build = Module::Build->new(
     requires             => {
         perl   => "$]",
         parent => '0',
+
+        'Class::Data::Inheritable',
+        'Net::OpenSSH',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
