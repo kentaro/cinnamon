@@ -1,6 +1,7 @@
-package Cinnamon::SSH;
+package Cinnamon::Remote;
 use strict;
 use warnings;
+use Carp ();
 use Net::OpenSSH;
 
 sub new {
@@ -15,13 +16,14 @@ sub connection {
        );
 }
 
-sub error {
-    $_[0]->connection->error;
-}
+sub host { $_[0]->{host} }
 
 sub execute {
     my ($self, @cmd) = @_;
     my ($stdout, $stderr) = $self->connection->capture2(join(' ', @cmd));
+
+    Carp::croak $self->connection->error
+            if  $self->connection->error;
 
     ($stdout, $stderr);
 }

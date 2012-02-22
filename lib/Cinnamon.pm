@@ -5,16 +5,16 @@ use 5.008008;
 
 our $VERSION = '0.01';
 
-use Cinnamon::Config ();
+use Cinnamon::Config;
 use Cinnamon::Runner;
 
 sub run {
     my ($class, $role, $task, @args) = @_;
 
-    Cinnamon::Config::set(role => $role);
-    Cinnamon::Config::set(task => $task);
+    Cinnamon::Config::set role => $role;
+    Cinnamon::Config::set task => $task;
 
-    for my $host (@{Cinnamon::Config::hosts || []}) {
+    for my $host (@{Cinnamon::Config::get_role || []}) {
         Cinnamon::Runner->start($host, @args);
     }
 }

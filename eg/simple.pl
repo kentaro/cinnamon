@@ -1,5 +1,4 @@
-use Cinnamon::Config;
-use Cinnamon::Function;
+use Cinnamon::DSL;
 
 my $application = 'Cinnamon::App';
 
@@ -7,16 +6,17 @@ set application => $application;
 set repository  => "git://repository.admin.h/projects/$application";
 set deploy_to   => "/home/httpd/apps/$application";
 
-role development => sub {
-    'develpment.h'
-};
-
+role development => 'development.example.com';
 task development => {
     update => sub {
         my ($host, @args) = @_;
 
+        run  'pwd';
+        sudo 'pwd';
+
         ssh {
-            print run 'pwd';
+            run  'pwd';
+            sudo 'pwd';
         } $host;
     },
 
@@ -26,16 +26,17 @@ task development => {
     },
 };
 
-role production => sub {
-    'production.host'
-};
-
-task development => {
+role production => 'production.example.com';
+task production => {
     update => sub {
         my ($host, @args) = @_;
 
+        run  'pwd';
+        sudo 'pwd';
+
         ssh {
-            print run 'pwd';
+            run  'pwd';
+            sudo 'pwd';
         } $host;
     },
 

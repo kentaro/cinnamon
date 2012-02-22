@@ -1,68 +1,51 @@
 package Cinnamon::Config;
 use strict;
 use warnings;
-use parent qw(
-    Exporter
-    Cinnamon::Storage
-);
 
-our @EXPORT = qw(
-    set
-    get
-    role
-    task
-);
+my %CONFIG;
+my %ROLES;
+my %TASKS;
 
-__PACKAGE__->storage({});
-
-# user commands
 sub set ($$) {
-    my ($name, $value) = @_;
-    __PACKAGE__->storage->{$name} = $value;
+    my ($key, $value) = @_;
+    $CONFIG{$key} = $value;
 }
 
 sub get ($) {
-    my ($name) = @_;
-    __PACKAGE__->storage->{$name};
+    my ($key) = @_;
+    $CONFIG{$key};
 }
 
-sub role ($$) {
-    my ($name, $hosts) = @_;
-    __PACKAGE__->storage->{__ROLES__} ||= {};
-    __PACKAGE__->storage->{__ROLES__}{$name} = ref $hosts eq 'CODE' ? $hosts :
-        ref $hosts ne 'ARRAY' ? [$hosts] : $hosts;
+sub set_role ($$) {
+    my ($role, $hosts) = @_;
+    $ROLES{$role} = $hosts;
 }
 
-sub task ($%) {
-    my ($role, $tasks) = @_;
-
-    __PACKAGE__->storage->{__TASKS__}{$role} ||= {};
-
-    for my $key (%$tasks) {
-        __PACKAGE__->storage->{__TASKS__}{$role}{$key} = $tasks->{$key};
-    }
-}
-
-# internal
-sub hosts () {
-    my ($class) = @_;
-    my $role  = get('role');
-    my $hosts = __PACKAGE__->storage->{__ROLES__}{$role};
+sub get_role (@) {
+    my $role  = ($_[0] || get 'role') or die "no role";
+    my $hosts = $ROLES{$role};
        $hosts = $hosts->() if ref $hosts eq 'CODE';
 
-    ref $hosts ne 'ARRAY' ? [$hosts] : $hosts;
+    ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
 }
 
-sub get_task () {
-    my ($class) = @_;
-    my $role  = get 'role';
-    my $task  = get 'task';
+sub set_task ($$$) {
+    my ($role, $task, $code) = @_;
+    $TASKS{$role} ||= {};
+    $TASKS{$role}->{$task} = $code;
+}
 
-    __PACKAGE__->storage->{__TASKS__}{$role}{$task};
+sub get_task (@) {
+    my ($role, $task) = @_;
+
+    $role ||= get 'role' or die "no role";
+    $task ||= get 'task' or die "no task";
+
+    $TASKS{$role}->{$task};
 }
 
 sub user () {
-    __PACKAGE__->storage->{user} || do {
+    get 'user' || do {
         my $user = qx{whoami};
         chomp $user;
         $user;

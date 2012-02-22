@@ -1,9 +1,11 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
+
 use Cinnamon;
 
-do 'eg/simple.pl';
-my ($role, $task, @args) = @ARGV;
+my ($role, $task) = (shift, shift);
+my @args = @ARGV;
 
+do 'eg/simple.pl';
 Cinnamon->run($role, $task, @args);
