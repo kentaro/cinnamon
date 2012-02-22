@@ -33,11 +33,14 @@ sub role ($$) {
         ref $hosts ne 'ARRAY' ? [$hosts] : $hosts;
 }
 
-sub task ($$&) {
-    my ($role, $task, $code) = @_;
+sub task ($%) {
+    my ($role, $tasks) = @_;
 
     __PACKAGE__->storage->{__TASKS__}{$role} ||= {};
-    __PACKAGE__->storage->{__TASKS__}{$role}{$task} = $code;
+
+    for my $key (%$tasks) {
+        __PACKAGE__->storage->{__TASKS__}{$role}{$key} = $tasks->{$key};
+    }
 }
 
 # internal
