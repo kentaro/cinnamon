@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 use Cinnamon::DSL;
 
 my $application = 'Cinnamon::App';
@@ -14,7 +16,7 @@ task development => {
         run  'pwd';
         sudo 'pwd';
 
-        ssh {
+        remote {
             run  'pwd';
             sudo 'pwd';
         } $host;
@@ -34,7 +36,7 @@ task production => {
         run  'pwd';
         sudo 'pwd';
 
-        ssh {
+        remote {
             run  'pwd';
             sudo 'pwd';
         } $host;

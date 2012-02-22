@@ -14,7 +14,7 @@ our @EXPORT = qw(
     role
     task
 
-    ssh
+    remote
     run
     sudo
 );
@@ -44,7 +44,7 @@ sub task ($%) {
     }
 }
 
-sub ssh (&$) {
+sub remote (&$) {
     my ($code, $host) = @_;
 
     local $_ = Cinnamon::Remote->new(

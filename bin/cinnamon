@@ -3,9 +3,25 @@ use strict;
 use warnings;
 
 use Cinnamon;
+use Cinnamon::Logger;
 
 my ($role, $task) = (shift, shift);
-my @args = @ARGV;
+my @args   = @ARGV;
+my $config = 'config/deploy.pl';
 
-do 'eg/simple.pl';
+if (@args && -e $args[-1]) {
+    $config = pop @args;
+}
+
+if (!-e $config) {
+    log error => 'usage: cinnamon $role $task [@args $config]';
+    exit 1;
+}
+
+do $config;
+if ($@) {
+    log error => $@;
+    exit 1;
+}
+
 Cinnamon->run($role, $task, @args);
