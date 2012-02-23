@@ -5,7 +5,7 @@ use Cinnamon::DSL;
 my $application = 'Cinnamon::App';
 
 set application => $application;
-set repository  => "git://repository.admin.h/projects/$application";
+set repository  => "git://repository.example.com/projects/$application";
 set deploy_to   => "/home/httpd/apps/$application";
 
 role development => 'development.example.com';
