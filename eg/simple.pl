@@ -1,48 +1,73 @@
 use strict;
 use warnings;
+
+# Exports some commands
 use Cinnamon::DSL;
 
-my $application = 'Cinnamon::App';
+my $application = 'My::App';
 
+# It's required if you want to login to remote host
+set user => 'johndoe';
+
+# User defined params to use later
 set application => $application;
-set repository  => "git://repository.example.com/projects/$application";
-set deploy_to   => "/home/httpd/apps/$application";
+set repository  => "git://git.example.com/projects/$application";
+set deploy_to   => "/home/app/www/$application";
 
+# Lazily evaluated if passed as a code
+set lazy_value  => sub {
+    #...
+};
+
+# Roles
 role development => 'development.example.com';
+
+# Lazily evaluated if passed as a code
+role production  => sub {
+    my $res   = LWP::UserAgent->get('http://servers.example.com/api/hosts');
+    my $hosts = decode_json $res->content;
+       $hosts;
+};
+
+# Tasks
 task development => {
     update => sub {
         my ($host, @args) = @_;
 
-        run  'pwd';
-        sudo 'pwd';
+        # Executed on localhost
+        run 'some', 'command';
 
+        # Executed on remote host
         remote {
-            run  'pwd';
-            sudo 'pwd';
+            run  'git', 'pull';
+            sudo '/path/to/httpd', 'restart';
         } $host;
     },
 
-    start => sub {
+    restart => sub {
         my ($host, @args) = @_;
         # ...
     },
 };
 
-role production => 'production.example.com';
 task production => {
     update => sub {
         my ($host, @args) = @_;
 
-        run  'pwd';
-        sudo 'pwd';
+        # Executed on localhost
+        run 'some', 'command';
 
-        remote {
-            run  'pwd';
-            sudo 'pwd';
+        # Executed on remote host
+        my ($stdout, $stderr) = remote {
+            run  'git', 'pull';
+            sudo '/path/to/httpd', 'restart';
         } $host;
+
+        # Do something with the return values
+        My::IRC::Client->new->send('#deploy', "Updated: $stdout, $stderr");
     },
 
-    start => sub {
+    restart => sub {
         my ($host, @args) = @_;
         # ...
     },
