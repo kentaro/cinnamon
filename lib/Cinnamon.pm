@@ -5,18 +5,37 @@ use 5.008008;
 
 our $VERSION = '0.01';
 
+use Class::Load ();
+
 use Cinnamon::Config;
 use Cinnamon::Runner;
+use Cinnamon::Logger;
 
 sub run {
-    my ($class, $role, $task, @args) = @_;
+    my $class  = shift;
+    my @args   = Cinnamon::Config::load @_;
+    my $hosts  = Cinnamon::Config::get_role || [];
+    my $runner = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
 
-    Cinnamon::Config::set role => $role;
-    Cinnamon::Config::set task => $task;
+    Class::Load::load_class $runner;
 
-    for my $host (@{Cinnamon::Config::get_role || []}) {
-        Cinnamon::Runner->start($host, @args);
+    my $result = $runner->start($hosts, @args);
+    my (@success, @error);
+
+    for my $key (keys %{$result || {}}) {
+        if ($result->{$key}->{error}) {
+            push @error, $key;
+        }
+        else {
+            push @success, $key;
+        }
     }
+
+    log info => sprintf(
+        "\n========================\n[success]: %s\n[error]: %s",
+        (join(', ', @success) || ''),
+        (join(', ', @error)   || ''),
+    );
 }
 
 !!1;

@@ -19,6 +19,8 @@ my $build = Module::Build->new(
         'IPC::Run',
         'Net::OpenSSH',
         'Log::Dispatch',
+        'Class::Load',
+        'Coro',
     },
 
     no_index    => { 'directory' => [ 'inc' ] },

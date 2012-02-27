@@ -6,11 +6,15 @@ use IPC::Run ();
 
 sub execute {
     my ($class, @cmd) = @_;
-    my $result = IPC::Run::run \@cmd, undef, \my $stdout, \my $stderr;
+    my $result = IPC::Run::run \@cmd, \my $stdin, \my $stdout, \my $stderr;
+    chomp for ($stdout, $stderr);
 
-    Carp::croak $? if !$result;
-
-    ($stdout, $stderr);
+    +{
+        stdout    => $stdout,
+        stderr    => $stderr,
+        has_error => !$result,
+        error     => $?,
+    };
 }
 
 !!1;

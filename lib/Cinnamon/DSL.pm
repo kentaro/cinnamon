@@ -26,9 +26,7 @@ sub set ($$) {
 
 sub get ($@) {
     my ($name, @args) = @_;
-    my $value = Cinnamon::Config::get $name;
-       $value = $value->(@args) if ref $value eq 'CODE';
-       $value;
+    Cinnamon::Config::get $name, @args;
 }
 
 sub role ($$) {
@@ -59,36 +57,27 @@ sub run (@) {
     my (@cmd) = @_;
     my ($stdout, $stderr);
     my $host;
+    my $result;
 
     if (ref $_ eq 'Cinnamon::Remote') {
-        $host = $_->host;
-        ($stdout, $stderr) = eval { $_->execute(@cmd) };
+        $host   = $_->host;
+        $result = $_->execute(@cmd);
     }
     else {
-        $host = 'localhost';
-        ($stdout, $stderr) = eval { Cinnamon::Local->execute(@cmd) };
+        $host   = 'localhost';
+        $result = Cinnamon::Local->execute(@cmd);
     }
 
-    if ($@) {
-        my $message = sprintf "[%s] %s\n%s", $host, $@, join(' ', @cmd);
-        log error => $message;
-        exit 1;
+    if ($result->{has_error}) {
+        my $message = sprintf "%s: %s", $host, $result->{error}, join(' ', @cmd);
+        die $message;
     }
     else {
-        my $message = sprintf "[%s] %s", $host, join(' ', @cmd);
+        my $message = sprintf "[%s] %s: %s",
+            $host, join(' ', @cmd), ($result->{stdout} || $result->{stderr});
+
         log info => $message;
     }
-
-    if ($stdout) {
-        chomp $stdout;
-        print "  STDOUT: $stdout\n";
-    }
-    if ($stderr) {
-        chomp $stderr;
-        print "  STDERR: $stderr\n";
-    }
-
-    ($stdout, $stderr);
 }
 
 sub sudo (@) {
