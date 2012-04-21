@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 use Coro;
+use Coro::RWLock;
 use Cinnamon::Config::Loader;
 
 my %CONFIG;
