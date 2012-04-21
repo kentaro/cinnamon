@@ -24,7 +24,7 @@ sub execute {
     +{
         stdout    => $stdout,
         stderr    => $stderr,
-        has_error => !$self->connection->error,
+        has_error => !!$self->connection->error,
         error     => $self->connection->error,
     };
 }
