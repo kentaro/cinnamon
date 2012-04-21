@@ -15,12 +15,12 @@ my $build = Module::Build->new(
         perl   => "$]",
         parent => '0',
 
-        'Term::ANSIColor',
-        'IPC::Run',
-        'Net::OpenSSH',
-        'Log::Dispatch',
-        'Class::Load',
-        'Coro',
+        'Term::ANSIColor' => 0,
+        'IPC::Run'        => 0,
+        'Net::OpenSSH'    => 0,
+        'Log::Dispatch'   => 0,
+        'Class::Load'     => 0,
+        'Coro'            => 0,
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
