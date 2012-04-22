@@ -50,23 +50,20 @@ sub get_role (@) {
     ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
 }
 
-sub set_task ($$$) {
-    my ($role, $task, $code) = @_;
-    $TASKS{$role} ||= {};
-
+sub set_task ($$) {
+    my ($task, $code) = @_;
     $lock->wrlock;
-    $TASKS{$role}->{$task} = $code;
+    $TASKS{$task} = $code;
     $lock->unlock;
 }
 
 sub get_task (@) {
-    my ($role, $task) = @_;
+    my ($task) = @_;
 
-    $role ||= get('role') or die "no role";
     $task ||= get('task') or die "no task";
 
     $lock->rdlock;
-    my $value = $TASKS{$role}->{$task};
+    my $value = $TASKS{$task};
     $lock->unlock;
 
     $value;

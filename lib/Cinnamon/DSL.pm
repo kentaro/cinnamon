@@ -34,12 +34,10 @@ sub role ($$) {
     Cinnamon::Config::set_role $name => $hosts;
 }
 
-sub task ($%) {
-    my ($role, $tasks) = @_;
+sub task ($$) {
+    my ($task, $code) = @_;
 
-    for my $task (%$tasks) {
-        Cinnamon::Config::set_task $role => $task => $tasks->{$task};
-    }
+    Cinnamon::Config::set_task $task => $code;
 }
 
 sub remote (&$) {
@@ -69,7 +67,7 @@ sub run (@) {
     }
 
     if ($result->{has_error}) {
-        my $message = sprintf "%s: %s", $host, $result->{error}, join(' ', @cmd);
+        my $message = sprintf "%s: %s", $host, $result->{stderr}, join(' ', @cmd);
         die $message;
     }
     else {
