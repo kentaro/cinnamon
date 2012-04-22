@@ -8,8 +8,7 @@ use Cinnamon::Logger;
 use Cinnamon::Config;
 
 sub start {
-    my ($class, $hosts, @args) = @_;
-    my $task        = Cinnamon::Config::get_task;
+    my ($class, $hosts, $task, @args) = @_;
     my $concurrency = Cinnamon::Config::get('concurrency') || 1;
 
     my %result;

@@ -15,11 +15,12 @@ sub run {
     my $class  = shift;
     my @args   = Cinnamon::Config::load @_;
     my $hosts  = Cinnamon::Config::get_role || [];
+    my $task   = Cinnamon::Config::get_task;
     my $runner = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, @args);
+    my $result = $runner->start($hosts, $task, @args);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {
