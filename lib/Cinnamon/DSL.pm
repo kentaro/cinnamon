@@ -36,9 +36,9 @@ sub role ($$;$) {
 }
 
 sub task ($$) {
-    my ($task, $code) = @_;
+    my ($task, $task_def) = @_;
 
-    Cinnamon::Config::set_task $task => $code;
+    Cinnamon::Config::set_task $task => $task_def;
 }
 
 sub remote (&$) {

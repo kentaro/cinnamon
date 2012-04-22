@@ -55,9 +55,9 @@ sub get_role (@) {
 }
 
 sub set_task ($$) {
-    my ($task, $code) = @_;
+    my ($task, $task_def) = @_;
     $lock->wrlock;
-    $TASKS{$task} = $code;
+    $TASKS{$task} = $task_def;
     $lock->unlock;
 }
 
@@ -65,9 +65,13 @@ sub get_task (@) {
     my ($task) = @_;
 
     $task ||= get('task') or die "no task";
+    my @task_path = split(':', $task);
 
     $lock->rdlock;
-    my $value = $TASKS{$task};
+    my $value = \%TASKS;
+    for (@task_path) {
+        $value = $value->{$_};
+    }
     $lock->unlock;
 
     $value;
