@@ -31,11 +31,11 @@ sub get ($@) {
     $value;
 }
 
-sub set_role ($$) {
-    my ($role, $hosts) = @_;
+sub set_role ($$$) {
+    my ($role, $hosts, $params) = @_;
 
     $lock->wrlock;
-    $ROLES{$role} = $hosts;
+    $ROLES{$role} = [$hosts, $params];
     $lock->unlock;
 }
 
@@ -43,8 +43,12 @@ sub get_role (@) {
     my $role  = ($_[0] || get('role')) or die "no role";
 
     $lock->rdlock;
-    my $hosts = $ROLES{$role};
+    my ($hosts, $params) = @{$ROLES{$role}};
     $lock->unlock;
+
+    for my $key (keys %$params) {
+        set $key => $params->{$key};
+    }
 
     $hosts = $hosts->() if ref $hosts eq 'CODE';
     ref $hosts eq 'ARRAY' ? $hosts : [$hosts];

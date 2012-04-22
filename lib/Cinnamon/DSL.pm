@@ -29,9 +29,10 @@ sub get ($@) {
     Cinnamon::Config::get $name, @args;
 }
 
-sub role ($$) {
-    my ($name, $hosts) = @_;
-    Cinnamon::Config::set_role $name => $hosts;
+sub role ($$;$) {
+    my ($name, $hosts, $params) = @_;
+    $params ||= {};
+    Cinnamon::Config::set_role $name => $hosts, $params;
 }
 
 sub task ($$) {
