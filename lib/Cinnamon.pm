@@ -65,7 +65,6 @@ Cinnamon - A minimalistic deploy tool
   # User defined params to use later
   set application => $application;
   set repository  => "git://git.example.com/projects/$application";
-  set deploy_to   => "/home/app/www/$application";
 
   # Lazily evaluated if passed as a code
   set lazy_value  => sub {
@@ -73,54 +72,43 @@ Cinnamon - A minimalistic deploy tool
   };
 
   # Roles
-  role development => 'development.example.com';
+  role development => 'development.example.com', {
+      deploy_to => "/home/app/www/$application-devel",
+      branch    => "develop",
+  };
 
   # Lazily evaluated if passed as a code
   role production  => sub {
       my $res   = LWP::UserAgent->get('http://servers.example.com/api/hosts');
       my $hosts = decode_json $res->content;
          $hosts;
+  }, {
+      deploy_to => "/home/app/www/$application",
+      branch    => "master",
   };
 
   # Tasks
-  task development => {
-      update => sub {
-          my ($host, @args) = @_;
+  task update => sub {
+      my ($host, @args) = @_;
+      my $deploy_to = get('deploy_to');
+      my $branch = 'origin/' . get('branch');
 
-          # Executed on localhost
-          run 'some', 'command';
+      # Executed on localhost
+      run 'some', 'command';
 
-          # Executed on remote host
-          remote {
-              run  'git', 'pull';
-              sudo '/path/to/httpd', 'restart';
-          } $host;
-      },
-
-      restart => sub {
-          my ($host, @args) = @_;
-          # ...
-      },
+      # Executed on remote host
+      remote {
+          run "cd $deploy_to && git fetch origin && git checkout -q $branch && git submodule update --init";
+      } $host;
+  };
+  task restart => sub {
+    my ($host, @args) = @_;
+    # ...
   };
 
-  task production => {
-      update => sub {
-          my ($host, @args) = @_;
-
-          # Executed on localhost
-          run 'some', 'command';
-
-          # Executed on remote host
-          my ($stdout, $stderr) = remote {
-              run  'git', 'pull';
-              sudo '/path/to/httpd', 'restart';
-          } $host;
-
-          # Do something with the return values
-          My::IRC::Client->new->send('#deploy', "Updated: $stdout, $stderr");
-      },
-
-      restart => sub {
+  # Nest tasks
+  task server => {
+      setup => sub {
           my ($host, @args) = @_;
           # ...
       },
@@ -139,7 +127,7 @@ simple as possible, and I don't want to add too many commands:
 
 =head2 Structural Commands
 
-=head3 role ( I<$role: Str> => (I<$host: String> | I<$hosts: Array[String]> | I<$sub: CODE>) )
+=head3 role ( I<$role: Str> => (I<$host: String> | I<$hosts: Array[String]> | I<$sub: CODE>), I<$param: HASHREF> )
 
 =over 4
 
@@ -157,6 +145,12 @@ simple as possible, and I don't want to add too many commands:
          $hosts;
   };
 
+  # or
+
+  role production => 'production.example.com', {
+      hoge => 'fuga',
+  };
+
 Relates names (eg. production) to hosts to be deployed.
 
 If you pass a CODE as the second argument, this method delays the
@@ -164,27 +158,34 @@ value to be evaluated till the value is needed at the first time. This
 is useful, for instance, when you want to retrieve hosts information
 from some external APIs or so.
 
+If you pass a HASHREF as the third argument, you can get specified
+parameters by get DSL.
+
 =back
 
-=head3 task ( I<$role: Str> => I<\%tasks: Hash[String => CODE]> )
+=head3 task ( I<$taskname: Str> => (I<\%tasks: Hash[String => CODE]> | I<$sub: CODE>) )
 
 =over 4
 
-  task production => +{
-      update => sub {
-          my ($host, @args) = @_;
-          # ...
-      },
-
-      start => sub {
-          my ($host, @args) = @_;
-          # ...
-      },
-
+  task update => sub {
+      my ($host, @args) = @_;
+      my $hoge = get 'hoge'; # parameter set in global or role parameter
       # ...
   };
 
-Defines some named tasks under some C<role> by CODEs.
+  # you can nest tasks
+  task server => {
+      start => sub {
+        my ($host, @args) = @_;
+        # ...
+      },
+      stop => sub {
+        my ($host, @args) = @_;
+        # ...
+      },
+  };
+
+Defines some named tasks by CODEs.
 
 The arguments which are passed into the CODEs are:
 
