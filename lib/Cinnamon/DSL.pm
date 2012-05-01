@@ -7,6 +7,7 @@ use Cinnamon::Config;
 use Cinnamon::Local;
 use Cinnamon::Remote;
 use Cinnamon::Logger;
+use Term::ReadKey;
 
 our @EXPORT = qw(
     set
@@ -54,13 +55,15 @@ sub remote (&$) {
 
 sub run (@) {
     my (@cmd) = @_;
+    my $opt = shift @cmd if ref $cmd[0] eq 'HASH';
+
     my ($stdout, $stderr);
     my $host;
     my $result;
 
     if (ref $_ eq 'Cinnamon::Remote') {
         $host   = $_->host;
-        $result = $_->execute(@cmd);
+        $result = $_->execute($opt, @cmd);
     }
     else {
         $host   = 'localhost';
@@ -77,11 +80,22 @@ sub run (@) {
 
         log info => $message;
     }
+
+    return ($result->{stdout}, $result->{stderr});
 }
 
 sub sudo (@) {
     my (@cmd) = @_;
-    run 'sudo', @cmd;
+
+    my $password = Cinnamon::Config::get('password');
+    unless (defined $password) {
+        print "Enter sudo password: ";
+        ReadMode "noecho";
+        chomp($password = ReadLine 0);
+        Cinnamon::Config::set('password' => $password);
+    }
+
+    run {sudo => 1, password => $password}, @cmd;
 }
 
 !!1;
