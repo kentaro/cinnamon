@@ -299,6 +299,8 @@ command. Set appropriate username in advance if needed.
 
 Kentaro Kuribayashi E<lt>kentarok@gmail.comE<gt>
 
+Yuki Shibazaki E<lt>shibayu36 at gmail.comE<gt>
+
 =head1 SEE ALSO
 
 =head1 LICENSE
