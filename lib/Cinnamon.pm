@@ -196,7 +196,7 @@ The arguments which are passed into the CODEs are:
 The host name where the task is executed. Which is one of the hosts
 you set by C<role> command.
 
-=imte * I<@args>
+=item * I<@args>
 
 Command line argument which is passed by user.
 
