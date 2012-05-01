@@ -19,7 +19,7 @@ sub host { $_[0]->{host} }
 
 sub execute {
     my ($self, @cmd) = @_;
-    my $opt = shift @cmd if ref $cmd[0] eq 'HASH';
+    my $opt = shift @cmd;
     my ($stdout, $stderr);
     if (defined $opt && $opt->{sudo}) {
         ($stdout, $stderr) = $self->execute_by_sudo($opt->{password}, @cmd);
@@ -40,8 +40,7 @@ sub execute_by_sudo {
     my ($self, $password, @cmd) = @_;
     return $self->connection->capture2(
         { stdin_data => "$password\n" },
-        'sudo', '-Sk',
-        @cmd,
+        join(' ', 'sudo', '-Sk', @cmd),
     );
 }
 
