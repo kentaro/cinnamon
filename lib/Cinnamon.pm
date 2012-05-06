@@ -114,6 +114,10 @@ Cinnamon - A minimalistic deploy tool
       },
   };
 
+=head1 WARNINGS
+
+This software is under the heavy development and considered ALPHA quality.  Things might be broken, not all features have been implemented, and APIs will be likely to change.
+
 =head1 DESCRIPTION
 
 Cinnamon is a minimalistic deploy tool aiming to provide
