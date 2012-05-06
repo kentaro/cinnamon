@@ -1,11 +1,23 @@
+bin/cinnamon
 Build.PL
 Changes
+eg/simple.pl
 lib/Cinnamon.pm
+lib/Cinnamon/Config.pm
+lib/Cinnamon/Config/Loader.pm
+lib/Cinnamon/DSL.pm
+lib/Cinnamon/Local.pm
+lib/Cinnamon/Logger.pm
+lib/Cinnamon/Remote.pm
+lib/Cinnamon/Runner.pm
 MANIFEST			This list of files
 t/00_compile.t
+t/01_remote.t
 xt/01_podspell.t
 xt/02_perlcritic.t
 xt/03_pod.t
 xt/04_minimum_version.t
 xt/05_cpan_meta.t
 xt/06_meta_author.t
+xt/Cinnamon.pm
+xt/dsl/config.t
