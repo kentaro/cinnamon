@@ -311,6 +311,10 @@ Yuki Shibazaki E<lt>shibayu36 at gmail.comE<gt>
 
 =head1 SEE ALSO
 
+L<capistrano>
+
+L<Archer>
+
 =head1 LICENSE
 
 Copyright (C) Kentaro Kuribayashi
