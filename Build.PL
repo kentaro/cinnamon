@@ -21,7 +21,6 @@ my $build = Module::Build->new(
         'Log::Dispatch'   => 0,
         'Class::Load'     => 0,
         'Coro'            => 0,
-        'IO::Prompter'    => 0,
         'Term::ReadKey'   => 0,
     },
 
