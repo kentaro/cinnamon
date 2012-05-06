@@ -21,3 +21,7 @@ xt/05_cpan_meta.t
 xt/06_meta_author.t
 xt/Cinnamon.pm
 xt/dsl/config.t
+README
+LICENSE
+META.yml
+META.json
