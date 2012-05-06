@@ -21,6 +21,10 @@ set lazy_value  => sub {
 
 # Roles
 role development => 'development.example.com';
+role test => 'test.example.com', {
+    deploy_to => "/home/app/www/$application-Test",
+    hoge      => 'fuga',
+};
 
 # Lazily evaluated if passed as a code
 role production  => sub {
@@ -30,28 +34,22 @@ role production  => sub {
 };
 
 # Tasks
-task development => {
-    update => sub {
-        my ($host, @args) = @_;
+task update => sub {
+    my ($host, @args) = @_;
 
-        # Executed on localhost
-        run 'some', 'command';
+    # Executed on localhost
+    run 'some', 'command';
 
-        # Executed on remote host
-        remote {
-            run  'git', 'pull';
-            sudo '/path/to/httpd', 'restart';
-        } $host;
-    },
-
-    restart => sub {
-        my ($host, @args) = @_;
-        # ...
-    },
+    # Executed on remote host
+    remote {
+        run  'git', 'pull';
+        sudo '/path/to/httpd', 'restart';
+    } $host;
 };
 
-task production => {
-    update => sub {
+# nest tasks
+task server => {
+    setup => sub {
         my ($host, @args) = @_;
 
         # Executed on localhost
