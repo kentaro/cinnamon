@@ -299,6 +299,10 @@ command. Set appropriate username in advance if needed.
 
 =back
 
+=head1 REPOSITORY
+
+https://github.com/kentaro/cinnamon
+
 =head1 AUTHOR
 
 Kentaro Kuribayashi E<lt>kentarok@gmail.comE<gt>
