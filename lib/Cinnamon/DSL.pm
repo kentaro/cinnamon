@@ -55,7 +55,8 @@ sub remote (&$) {
 
 sub run (@) {
     my (@cmd) = @_;
-    my $opt = shift @cmd if ref $cmd[0] eq 'HASH';
+    my $opt;
+    $opt = shift @cmd if ref $cmd[0] eq 'HASH';
 
     my ($stdout, $stderr);
     my $host;
