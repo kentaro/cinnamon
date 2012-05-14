@@ -94,6 +94,8 @@ sub sudo (@) {
         ReadMode "noecho";
         chomp($password = ReadLine 0);
         Cinnamon::Config::set('password' => $password);
+        ReadMode 0;
+        print "\n";
     }
 
     run {sudo => 1, password => $password}, @cmd;
