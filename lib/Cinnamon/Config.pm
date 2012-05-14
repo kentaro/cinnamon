@@ -5,6 +5,7 @@ use warnings;
 use Coro;
 use Coro::RWLock;
 use Cinnamon::Config::Loader;
+use Cinnamon::Logger;
 
 my %CONFIG;
 my %ROLES;
@@ -43,7 +44,10 @@ sub get_role (@) {
     my $role  = ($_[0] || get('role')) or die "no role";
 
     $lock->rdlock;
-    my ($hosts, $params) = @{$ROLES{$role}};
+    my ($hosts, $params) = @{$ROLES{$role} or do {
+        log error => "Role |$role| not defined";
+        [];
+    }};
     $lock->unlock;
 
     for my $key (keys %$params) {
@@ -51,7 +55,10 @@ sub get_role (@) {
     }
 
     $hosts = $hosts->() if ref $hosts eq 'CODE';
-    ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
+    defined $hosts ? ref $hosts eq 'ARRAY' ? $hosts : [$hosts] : do {
+        log error => "Role |$role| is empty";
+        [];
+    };
 }
 
 sub set_task ($$) {
@@ -74,7 +81,10 @@ sub get_task (@) {
     }
     $lock->unlock;
 
-    $value;
+    $value || do {
+        log error => "Task |$task| not defined";
+        sub { };
+    };
 }
 
 sub user () {
