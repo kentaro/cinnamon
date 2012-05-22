@@ -1,4 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.02    Wed May 23 01:19:17 2012
+    - feedback when specified role or task is not defined
+    - some bug fix
+
 0.01    Sun May  6 21:08:32 2012
     - initial version
