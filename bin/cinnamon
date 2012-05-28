@@ -2,5 +2,6 @@
 use strict;
 use warnings;
 use Cinnamon;
+use Cinnamon::CLI;
 
-Cinnamon->run(@ARGV);
+Cinnamon::CLI->new->run(@ARGV);

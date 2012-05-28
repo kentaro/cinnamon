@@ -11,8 +11,13 @@ use Cinnamon::Config;
 use Cinnamon::Runner;
 use Cinnamon::Logger;
 
+sub new {
+    my $class = shift;
+    bless { }, $class;
+}
+
 sub run {
-    my $class  = shift;
+    my $self  = shift;
     my @args   = Cinnamon::Config::load @_;
     my $hosts  = Cinnamon::Config::get_role || [];
     my $task   = Cinnamon::Config::get_task;
