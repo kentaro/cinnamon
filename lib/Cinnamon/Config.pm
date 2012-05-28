@@ -45,7 +45,7 @@ sub get_role (@) {
 
     $lock->rdlock;
     my ($hosts, $params) = @{$ROLES{$role} or do {
-        log error => "Role |$role| not defined";
+        log error => "Role '$role' not defined";
         [];
     }};
     $lock->unlock;
@@ -56,7 +56,7 @@ sub get_role (@) {
 
     $hosts = $hosts->() if ref $hosts eq 'CODE';
     defined $hosts ? ref $hosts eq 'ARRAY' ? $hosts : [$hosts] : do {
-        log error => "Role |$role| is empty";
+        log error => "Role '$role' is empty";
         [];
     };
 }
@@ -82,7 +82,7 @@ sub get_task (@) {
     $lock->unlock;
 
     $value || do {
-        log error => "Task |$task| not defined";
+        log error => "Task '$task' not defined";
         sub { };
     };
 }
