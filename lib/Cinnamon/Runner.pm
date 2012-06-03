@@ -2,42 +2,25 @@ package Cinnamon::Runner;
 use strict;
 use warnings;
 
-use Coro;
-
 use Cinnamon::Logger;
 use Cinnamon::Config;
 
 sub start {
     my ($class, $hosts, $task, @args) = @_;
-    my $concurrency = Cinnamon::Config::get('concurrency') || 1;
 
     my %result;
-    my @workers;
-    for my $job (@{$hosts || []}) {
-        my $i = scalar(@$hosts) % $concurrency;
+    for my $host (@$hosts) {
+        $result{$host} = +{ error => 0 };
 
-        $workers[$i] ||= [];
-        push @{$workers[$i]}, $job;
+        eval { $task->($host, @args) };
 
-        $result{$job} = +{ error => 0 };
+        if ($@) {
+            chomp $@;
+            log error => sprintf '[%s] %s', $host, $@;
+            $result{$host}->{error}++ ;
+        }
     }
 
-    my @coros;
-    for my $jobs (@workers) {
-        push @coros, async {
-            for my $job (@$jobs) {
-                eval { $task->($job, @args) };
-
-                if ($@) {
-                    chomp $@;
-                    log error => sprintf '[%s] %s', $job, $@;
-                    $result{$job}->{error}++ ;
-                }
-            }
-        };
-    }
-
-    $_->join for @coros;
     \%result;
 }
 

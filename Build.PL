@@ -20,7 +20,6 @@ my $build = Module::Build->new(
         'Net::OpenSSH'         => 0,
         'Log::Dispatch'        => 0,
         'Class::Load'          => 0,
-        'Coro'                 => 0,
         'Term::ReadKey'        => 0,
         'Getopt::Long::Parser' => 0,
     },
