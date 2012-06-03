@@ -41,13 +41,12 @@ sub set_role ($$$) {
 }
 
 sub get_role (@) {
-    my $role  = ($_[0] || get('role')) or die "no role";
+    my $role  = ($_[0] || get('role'));
+
+    my $role_def = $ROLES{$role} or return undef;
 
     $lock->rdlock;
-    my ($hosts, $params) = @{$ROLES{$role} or do {
-        log error => "Role '$role' not defined";
-        [];
-    }};
+    my ($hosts, $params) = @$role_def;
     $lock->unlock;
 
     for my $key (keys %$params) {
@@ -55,10 +54,10 @@ sub get_role (@) {
     }
 
     $hosts = $hosts->() if ref $hosts eq 'CODE';
-    defined $hosts ? ref $hosts eq 'ARRAY' ? $hosts : [$hosts] : do {
-        log error => "Role '$role' is empty";
-        [];
-    };
+    $hosts = [] unless defined $hosts;
+    $hosts = ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
+
+    return $hosts;
 }
 
 sub set_task ($$) {
@@ -71,7 +70,7 @@ sub set_task ($$) {
 sub get_task (@) {
     my ($task) = @_;
 
-    $task ||= get('task') or die "no task";
+    $task ||= get('task');
     my @task_path = split(':', $task);
 
     $lock->rdlock;
@@ -81,10 +80,7 @@ sub get_task (@) {
     }
     $lock->unlock;
 
-    $value || do {
-        log error => "Task '$task' not defined";
-        sub { };
-    };
+    $value;
 }
 
 sub user () {

@@ -17,15 +17,24 @@ sub new {
 }
 
 sub run {
-    my $self  = shift;
-    my @args   = Cinnamon::Config::load @_;
-    my $hosts  = Cinnamon::Config::get_role || [];
-    my $task   = Cinnamon::Config::get_task;
-    my $runner = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
+    my ($self, $role, $task, %opts)  = @_;
+    my @args     = Cinnamon::Config::load $role, $task, %opts;
+    my $hosts    = Cinnamon::Config::get_role;
+    my $task_def = Cinnamon::Config::get_task;
+    my $runner   = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
+
+    unless (defined $hosts) {
+        log 'error', "undefined role : '$role'";
+        return;
+    }
+    unless (defined $task_def) {
+        log 'error', "undefined task : '$task'";
+        return;
+    }
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, $task, @args);
+    my $result = $runner->start($hosts, $task_def, @args);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {
