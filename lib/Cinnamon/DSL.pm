@@ -59,27 +59,18 @@ sub run (@) {
     $opt = shift @cmd if ref $cmd[0] eq 'HASH';
 
     my ($stdout, $stderr);
-    my $host;
     my $result;
 
+    my $is_remote = ref $_ eq 'Cinnamon::Remote';
+    my $host = $is_remote ? $_->host : 'localhost';
+
+    log info => sprintf "[%s :: executing] %s", $host, join(' ', @cmd);
+
     if (ref $_ eq 'Cinnamon::Remote') {
-        $host   = $_->host;
         $result = $_->execute($opt, @cmd);
     }
     else {
-        $host   = 'localhost';
         $result = Cinnamon::Local->execute(@cmd);
-    }
-
-    if ($result->{has_error}) {
-        my $message = sprintf "%s: %s", $host, $result->{stderr}, join(' ', @cmd);
-        die $message;
-    }
-    else {
-        my $message = sprintf "[%s] %s: %s",
-            $host, join(' ', @cmd), ($result->{stdout} || $result->{stderr});
-
-        log info => $message;
     }
 
     return ($result->{stdout}, $result->{stderr});

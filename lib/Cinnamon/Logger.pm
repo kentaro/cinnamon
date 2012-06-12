@@ -4,8 +4,6 @@ use warnings;
 use parent qw(Exporter);
 
 use Term::ANSIColor ();
-use Log::Dispatch;
-use Log::Dispatch::Screen;
 
 use Cinnamon::Config;
 
@@ -13,33 +11,22 @@ our @EXPORT = qw(
     log
 );
 
-my $logger;
-sub logger () {
-    $logger ||= do {
-        my $level = Cinnamon::Config::get('log_level') || 'info';
-        my $logger = Log::Dispatch->new;
-           $logger->add(
-               Log::Dispatch::Screen->new(
-                   name      => 'screen',
-                   min_level => $level,
-               )
-           );
-           $logger;
-    };
-}
-
 my %COLOR = (
-    error => 'red',
+    success => 'green',
+    error   => 'red',
+    info    => 'white',
 );
 
 sub log ($$) {
-    my ($level, $message) = @_;
-    my $color = $COLOR{$level} || 'green';
+    my ($type, $message, $color) = @_;
+    $color ||= $COLOR{$type};
 
-    $message = Term::ANSIColor::colored $message, $color;
+    $message = Term::ANSIColor::colored $message, $color if $color;
     $message .= "\n";
 
-    logger->log(level => $level, message => $message);
+    my $fh = $type eq 'error' ? *STDERR : *STDOUT;
+
+    print $fh $message;
 }
 
 !!1;

@@ -22,6 +22,8 @@ my $build = Module::Build->new(
         'Class::Load'          => 0,
         'Term::ReadKey'        => 0,
         'Getopt::Long::Parser' => 0,
+        'AnyEvent'             => 0,
+        'POSIX'                => 0,
     },
     build_requires       => {
         'Directory::Scratch' => 0,

@@ -46,9 +46,13 @@ sub run {
         }
     }
 
-    log info => sprintf(
-        "\n========================\n[success]: %s\n[error]: %s",
+    log success => sprintf(
+        "\n========================\n[success]: %s",
         (join(', ', @success) || ''),
+    );
+
+    log error => sprintf(
+        "[error]: %s",
         (join(', ', @error)   || ''),
     );
 }
