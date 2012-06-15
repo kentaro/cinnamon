@@ -8,6 +8,7 @@ use Cinnamon::Logger;
 my %CONFIG;
 my %ROLES;
 my %TASKS;
+my %DESCS;
 
 sub set ($$) {
     my ($key, $value) = @_;
@@ -48,6 +49,11 @@ sub get_role (@) {
     return $hosts;
 }
 
+sub set_desc ($$) {
+    my ($task, $desc) = @_;
+    $DESCS{$task} = $desc;
+}
+
 sub set_task ($$) {
     my ($task, $task_def) = @_;
     $TASKS{$task} = $task_def;
@@ -83,5 +89,27 @@ sub load (@) {
 
     Cinnamon::Config::Loader->load(config => $opt{config});
 }
+
+sub get_roles () {
+    return keys %ROLES;
+}
+
+sub get_tasks () {
+    my @tasks;
+    for my $task (keys %TASKS) {
+        push @tasks, $task;
+        # nest task
+        if(ref $TASKS{$task} eq 'HASH') {
+            push @tasks, $task . ':' .$_
+                for (keys %{$TASKS{$task}});
+        }
+    }
+    return @tasks;
+}
+
+sub get_descs () {
+    return %DESCS;
+}
+
 
 !!1;
