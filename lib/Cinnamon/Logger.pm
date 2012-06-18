@@ -18,8 +18,8 @@ my %COLOR = (
 );
 
 sub log ($$) {
-    my ($type, $message, $color) = @_;
-    $color ||= $COLOR{$type};
+    my ($type, $message) = @_;
+    my $color ||= $COLOR{$type};
 
     $message = Term::ANSIColor::colored $message, $color if $color;
     $message .= "\n";
@@ -27,6 +27,8 @@ sub log ($$) {
     my $fh = $type eq 'error' ? *STDERR : *STDOUT;
 
     print $fh $message;
+
+    return;
 }
 
 !!1;

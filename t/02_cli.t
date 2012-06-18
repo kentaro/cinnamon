@@ -32,7 +32,7 @@ task echo_user => sub {
 };
 CONFIG
     $app->run('test', 'echo_user');
-    is $app->system_output, 'app';
+    like $app->system_output, qr{app};
 }
 
 sub _change_config_name : Tests {
@@ -46,7 +46,7 @@ task echo_user => sub {
 };
 CONFIG
     $app->run('--config=config/deploy_changed.pl', 'test', 'echo_user');
-    is $app->system_output, 'app';
+    like $app->system_output, qr{app};
 }
 
 __PACKAGE__->runtests;
