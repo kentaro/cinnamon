@@ -1,5 +1,10 @@
 Revision history for Perl extension Cinnamon
 
+0.03    Mon Jun 18 23:20:54 2012
+    - perl 5.10.1 or later is required
+    - fix error message output
+    - synchronous output
+
 0.02    Wed May 23 01:19:17 2012
     - feedback when specified role or task is not defined
     - some bug fix
