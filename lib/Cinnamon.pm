@@ -1,7 +1,7 @@
 package Cinnamon;
 use strict;
 use warnings;
-use 5.008008;
+use 5.010_001;
 
 our $VERSION = '0.02';
 
