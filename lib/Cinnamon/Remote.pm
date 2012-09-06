@@ -16,9 +16,9 @@ sub new {
 
 sub connection {
     my $self = shift;
-       $self->{connection} ||= Net::OpenSSH->new(
-           $self->{host}, user => $self->{user}
-       );
+    return Net::OpenSSH->new(
+        $self->{host}, user => $self->{user},
+    );
 }
 
 sub host { $_[0]->{host} }
@@ -34,10 +34,7 @@ sub execute {
         @cmd = ('sudo', '-Sk', @cmd);
     }
 
-    my ($stdin, $stdout, $stderr, $pid) = $conn->open_ex({
-        stdin_pipe => 1,
-        stdout_pipe => 1,
-        stderr_pipe => 1,
+    my ($stdin, $stdout, $stderr, $pid) = $conn->open3({
         tty => $opt->{tty},
     }, join ' ', @cmd);
 
@@ -55,8 +52,6 @@ sub execute {
     my $end = sub {
         undef $fhout;
         undef $fherr;
-        waitpid $pid, 0;
-        $exitcode = $?;
         $cv->send;
     };
 
@@ -114,6 +109,9 @@ sub execute {
     );
 
     $cv->recv;
+    local $? = 0;
+    waitpid($pid, 0);
+    $exitcode = $?;
 
     if ($exitcode != 0) {
         log error => sprintf "[%s] Status: %d", $host, $exitcode;
