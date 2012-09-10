@@ -3,10 +3,7 @@ use strict;
 use warnings;
 use Net::OpenSSH;
 
-use AnyEvent;
-use AnyEvent::Handle;
-use POSIX;
-
+use Cinnamon::HandleManager;
 use Cinnamon::Logger;
 
 sub new {
@@ -42,76 +39,17 @@ sub execute {
         print $stdin "$opt->{password}\n";
     }
 
-    my $cv = AnyEvent->condvar;
-    my $exitcode;
-    my ($fhout, $fherr);
+    my $hm = Cinnamon::HandleManager->new(host => $self->{host});
+    $hm->register_fh(stdout => $stdout);
+    $hm->register_fh(stderr => $stderr);
+    $hm->start_async_read();
 
-    my $stdout_str = '';
-    my $stderr_str = '';
+    my $stdout_str = $hm->captured_str('stdout');
+    my $stderr_str = $hm->captured_str('stderr');
 
-    my $end = sub {
-        undef $fhout;
-        undef $fherr;
-        $cv->send;
-    };
-
-    my $print = sub {
-        my ($s, $handle) = @_;
-        my $type = $handle eq 'stdout' ? 'info' : 'error';
-        while ($s =~ s{([^\x0D\x0A]*)\x0D?\x0A}{}) {
-            log $type => sprintf "[%s :: %s] %s",
-                $host, $handle, $1;
-        }
-        if (length $s) {
-            log $type => sprintf "[%s :: %s] %s",
-                $host, $handle, $s;
-        }
-    };
-
-    $fhout = AnyEvent::Handle->new(
-        fh => $stdout,
-        on_read => sub {
-            $stdout_str .= $_[0]->rbuf;
-            $print->($_[0]->rbuf => 'stdout');
-            substr($_[0]->{rbuf}, 0) = '';
-        },
-        on_eof => sub {
-            undef $stdout;
-            $end->() if not $stdout and not $stderr;
-        },
-        on_error => sub {
-            my ($handle, $fatal, $message) = @_;
-            log error => sprintf "[%s] STDOUT: %s (%d)", $host, $message, $!
-                unless $! == POSIX::EPIPE;
-            undef $stdout;
-            $end->() if not $stdout and not $stderr;
-        },
-    );
-
-    $fherr = AnyEvent::Handle->new(
-        fh => $stderr,
-        on_read => sub {
-            $stderr_str .= $_[0]->rbuf;
-            $print->($_[0]->rbuf => 'stderr');
-            substr($_[0]->{rbuf}, 0) = '';
-        },
-        on_eof => sub {
-            undef $stderr;
-            $end->() if not $stdout and not $stderr;
-        },
-        on_error => sub {
-            my ($handle, $fatal, $message) = @_;
-            log error => sprintf "[%s] STDERR: %s (%d)", $host, $message, $!
-                unless $! == POSIX::EPIPE;
-            undef $stderr;
-            $end->() if not $stdout and not $stderr;
-        },
-    );
-
-    $cv->recv;
     local $? = 0;
     waitpid($pid, 0);
-    $exitcode = $?;
+    my $exitcode = $?;
 
     if ($exitcode != 0) {
         log error => sprintf "[%s] Status: %d", $host, $exitcode;
@@ -120,8 +58,8 @@ sub execute {
     +{
         stdout    => $stdout_str,
         stderr    => $stderr_str,
-        has_error => !!$self->connection->error,
-        error     => $self->connection->error,
+        has_error => !!$exitcode,
+        error     => $exitcode,
     };
 }
 
