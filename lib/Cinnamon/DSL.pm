@@ -14,11 +14,14 @@ our @EXPORT = qw(
     get
     role
     task
+    desc
 
     remote
     run
     sudo
 );
+
+my $cur_desc = '';
 
 sub set ($$) {
     my ($name, $value) = @_;
@@ -36,9 +39,18 @@ sub role ($$;$) {
     Cinnamon::Config::set_role $name => $hosts, $params;
 }
 
+sub desc ($) {
+    my ($desc) = @_;
+    $cur_desc = $desc;
+}
+
 sub task ($$) {
     my ($task, $task_def) = @_;
 
+    if($cur_desc) {
+        Cinnamon::Config::set_desc $task => $cur_desc;
+        $cur_desc = "";
+    }
     Cinnamon::Config::set_task $task => $task_def;
 }
 

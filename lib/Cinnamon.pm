@@ -57,6 +57,21 @@ sub run {
     );
 }
 
+sub show_info () {
+    my ($self, %opt)  = @_;
+    my ($role, $task)  = ('','');
+    my @args = Cinnamon::Config::load $role, $task, %opt;
+
+    my @tasks = Cinnamon::Config::get_tasks;
+    my %descs = Cinnamon::Config::get_descs;
+    log success => sprintf("Tasks");
+    printf("  %-15s %s\n", $_, $descs{$_}||'') for @tasks;
+
+    my @roles = Cinnamon::Config::get_roles;
+    log success => sprintf("Roles");
+    printf("  %s\n",$_) for @roles;
+}
+
 !!1;
 
 __END__

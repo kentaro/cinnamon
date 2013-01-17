@@ -25,6 +25,7 @@ sub run {
     $p->getoptions(
         "h|help"     => \$self->{help},
         "c|config=s" => \$self->{config},
+        "T|tasks"    => \$self->{tasks},
     );
     return $self->usage if $self->{help};
 
@@ -36,6 +37,9 @@ sub run {
 
 
     my ($role, $task) = @ARGV;
+    if($self->{tasks}) {
+        return $self->cinnamon->show_info(config => $self->{config});
+    }
     unless ($role && $task) {
         $self->print("please specify role and task\n");
         return $self->usage;
