@@ -49,6 +49,20 @@ CONFIG
     like $app->system_output, qr{app};
 }
 
+sub _read_command_line_args : Tests {
+    my $app = Test::Cinnamon::CLI::cli();
+    $app->dir->touch("config/deploy.pl", <<'CONFIG');
+use Cinnamon::DSL;
+role test => 'localhost';
+task args => sub {
+    my $host = shift;
+    print join "\t", @_;
+};
+CONFIG
+    $app->run('test', 'args', '1', '2');
+    like $app->system_output, qr{1\t2};
+}
+
 __PACKAGE__->runtests;
 
 1;

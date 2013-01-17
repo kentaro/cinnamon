@@ -34,14 +34,14 @@ sub run {
         return $self->usage;
     }
 
-
-    my ($role, $task) = @ARGV;
+    my $role = shift @ARGV;
+    my $task = shift @ARGV;
     unless ($role && $task) {
         $self->print("please specify role and task\n");
         return $self->usage;
     }
 
-    $self->cinnamon->run($role, $task, config => $self->{config});
+    $self->cinnamon->run($role, $task, config => $self->{config}, args => [@ARGV]);
 }
 
 sub usage {
