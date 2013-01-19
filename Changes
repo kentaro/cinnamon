@@ -1,5 +1,9 @@
 Revision history for Perl extension Cinnamon
 
+0.04    Sun Jan 20 08:28:45 2013
+    - add config example
+    - accept command-line arguments using -s (--set) option. Thanks to hatyuki@github.
+
 0.03    Mon Jun 18 23:20:54 2012
     - perl 5.10.1 or later is required
     - fix error message output
