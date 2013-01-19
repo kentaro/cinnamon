@@ -34,7 +34,7 @@ sub run {
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, $task_def, @args);
+    my $result = $runner->start($hosts, $task_def);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {
