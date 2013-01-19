@@ -83,8 +83,8 @@ sub load (@) {
 
     Cinnamon::Config::Loader->load(config => $opt{config});
 
-    for my $key (keys %{ $opt{vars} }) {
-        set $key => $opt{vars}->{$key};
+    for my $key (keys %{ $opt{override_settings} }) {
+        set $key => $opt{override_settings}->{$key};
     }
 }
 
