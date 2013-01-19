@@ -25,6 +25,7 @@ sub run {
     $p->getoptions(
         "h|help"     => \$self->{help},
         "c|config=s" => \$self->{config},
+        "s|set=s%"   => \$self->{vars},
     );
     return $self->usage if $self->{help};
 
@@ -41,7 +42,7 @@ sub run {
         return $self->usage;
     }
 
-    $self->cinnamon->run($role, $task, config => $self->{config}, args => [@ARGV]);
+    $self->cinnamon->run($role, $task, config => $self->{config}, vars => $self->{vars});
 }
 
 sub usage {

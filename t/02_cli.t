@@ -55,12 +55,12 @@ sub _read_command_line_args : Tests {
 use Cinnamon::DSL;
 role test => 'localhost';
 task args => sub {
-    my $host = shift;
-    print join "\t", @_;
+    my $host  = shift;
+    printf "%s\t%s\n", get('args1'), get('args2');
 };
 CONFIG
-    $app->run('test', 'args', '1', '2');
-    like $app->system_output, qr{1\t2};
+    $app->run('test', 'args', '-s', 'args1=foo', 'args2=bar');
+    like $app->system_output, qr{foo\tbar};
 }
 
 __PACKAGE__->runtests;

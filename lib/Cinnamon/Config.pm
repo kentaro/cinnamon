@@ -82,6 +82,10 @@ sub load (@) {
     set task => $task;
 
     Cinnamon::Config::Loader->load(config => $opt{config});
+
+    for my $key (keys %{ $opt{vars} }) {
+        set $key => $opt{vars}->{$key};
+    }
 }
 
 !!1;
