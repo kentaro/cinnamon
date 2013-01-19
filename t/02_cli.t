@@ -6,7 +6,6 @@ use lib file(__FILE__)->dir->file('lib')->stringify;
 
 use base qw(Test::Class);
 
-
 use Test::Cinnamon::CLI;
 
 sub _help : Tests {
@@ -59,7 +58,7 @@ task args => sub {
     printf "%s\t%s\n", get('args1'), get('args2');
 };
 CONFIG
-    $app->run('test', 'args', '-s', 'args1=foo', 'args2=bar');
+    $app->run('test', 'args', '-s', 'args1=foo', '-s', 'args2=bar');
     like $app->system_output, qr{foo\tbar};
 }
 
