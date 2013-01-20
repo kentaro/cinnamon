@@ -63,5 +63,3 @@ CONFIG
 }
 
 __PACKAGE__->runtests;
-
-1;
