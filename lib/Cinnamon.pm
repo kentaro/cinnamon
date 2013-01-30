@@ -23,7 +23,7 @@ sub run {
 
     if ($opts{info}) {
         log 'info', YAML::Dump(Cinnamon::Config::info);
-        exit;
+        return;
     }
 
     my $hosts    = Cinnamon::Config::get_role;
