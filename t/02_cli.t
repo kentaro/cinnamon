@@ -8,16 +8,41 @@ use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
 
+sub setup : Test(setup) {
+    Cinnamon::Config::reset;
+}
+
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     $app->run('--help');
-    is $app->system_error, "Usage: cinnamon [--config=<path>] [--help] <role> <task>\n";
+    is $app->system_error, "Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task>\n";
+}
+
+sub _info : Tests {
+    my $app = Test::Cinnamon::CLI::cli();
+    $app->dir->touch("config/deploy.pl", <<CONFIG);
+use Cinnamon::DSL;
+role production  => sub { 'example.com'  }, { foo => 'bar' };
+task update      => sub { 'do something' };
+CONFIG
+    $app->run('--config=config/deploy.pl', '--info');
+    is $app->system_output, <<"OUTPUT";
+\e[37m---
+roles:
+  production:
+    hosts: example.com
+    params:
+      foo: bar
+tasks:
+  update: !!perl/code '{ "DUMMY" }'
+\e[0m
+OUTPUT
 }
 
 sub _no_config : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     $app->run('role', 'task');
-    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--help] <role> <task>\n";
+    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--help] [--info] <role> <task>\n";
 }
 
 sub _valid : Tests {
