@@ -29,7 +29,7 @@ role test => 'test.example.com', {
 
 # Lazily evaluated if passed as a code
 role production  => sub {
-    my $res   = LWP::UserAgent->get('http://servers.example.com/api/hosts');
+    my $res   = LWP::UserAgent->new->get('http://servers.example.com/api/hosts');
     my $hosts = decode_json $res->content;
        $hosts;
 };
