@@ -9,6 +9,12 @@ my %CONFIG;
 my %ROLES;
 my %TASKS;
 
+sub reset () {
+    %CONFIG = ();
+    %ROLES  = ();
+    %TASKS  = ();
+}
+
 sub set ($$) {
     my ($key, $value) = @_;
 

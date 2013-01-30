@@ -8,6 +8,10 @@ use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
 
+sub setup : Test(setup) {
+    Cinnamon::Config::reset;
+}
+
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     $app->run('--help');
@@ -21,7 +25,7 @@ use Cinnamon::DSL;
 role production  => sub { 'example.com'  }, { foo => 'bar' };
 task update      => sub { 'do something' };
 CONFIG
-    $app->run('--info');
+    $app->run('--config=config/deploy.pl', '--info');
     is $app->system_output, <<"OUTPUT";
 \e[37m---
 roles:
