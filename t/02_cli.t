@@ -22,8 +22,7 @@ role production  => sub { 'example.com'  }, { foo => 'bar' };
 task update      => sub { 'do something' };
 CONFIG
     $app->run('--info');
-    use Test::Differences;
-    eq_or_diff $app->system_output, <<"OUTPUT";
+    is $app->system_output, <<"OUTPUT";
 \e[37m---
 roles:
   production:
