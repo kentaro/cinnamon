@@ -88,4 +88,18 @@ sub load (@) {
     }
 }
 
+sub info {
+    my $self  = shift;
+    my %roles = map {
+        my ($hosts, $params) = @{$ROLES{$_}};
+        $hosts = $hosts->() if ref $hosts eq 'CODE';
+        $_ => { hosts => $hosts, params => $params };
+    } keys %ROLES;
+
+    +{
+        roles => \%roles,
+        tasks => \%TASKS,
+    }
+}
+
 !!1;

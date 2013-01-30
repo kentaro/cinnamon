@@ -1,5 +1,6 @@
 use strict;
 use warnings;
+use LWP::UserAgent;
 
 # Exports some commands
 use Cinnamon::DSL;
