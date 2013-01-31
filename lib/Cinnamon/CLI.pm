@@ -24,6 +24,7 @@ sub run {
     );
     $p->getoptions(
         "h|help"     => \$self->{help},
+        "i|info"     => \$self->{info},
         "c|config=s" => \$self->{config},
         "s|set=s%"   => \$self->{override_settings},
     );
@@ -37,18 +38,24 @@ sub run {
 
     my $role = shift @ARGV;
     my $task = shift @ARGV;
-    unless ($role && $task) {
+    if (!$self->{info} && (!$role && !$task)) {
         $self->print("please specify role and task\n");
         return $self->usage;
     }
 
-    $self->cinnamon->run($role, $task, config => $self->{config}, override_settings => $self->{override_settings});
+    $self->cinnamon->run(
+        $role,
+        $task,
+        config            => $self->{config},
+        override_settings => $self->{override_settings},
+        info              => $self->{info},
+    );
 }
 
 sub usage {
     my $self = shift;
     my $msg = <<"HELP";
-Usage: cinnamon [--config=<path>] [--help] <role> <task>
+Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task>
 HELP
     $self->print($msg);
 }
@@ -58,4 +65,4 @@ sub print {
     print STDERR $msg;
 }
 
-1;
+!!1;
