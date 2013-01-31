@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.05    Thu Jan 31 15:47:09 2013
+    - Added -i/--info command to dump roles/tasks info.
+
 0.04    Sun Jan 20 08:28:45 2013
     - add config example
     - accept command-line arguments using -s (--set) option. Thanks to hatyuki@github.
