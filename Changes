@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.06    Fri Feb 22 00:42:24 2013
+    - multi task support
+
 0.05    Thu Jan 31 15:47:09 2013
     - Added -i/--info command to dump roles/tasks info.
 
