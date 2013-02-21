@@ -3,13 +3,14 @@ use warnings;
 use Module::Build;
 
 my $build = Module::Build->new(
+    dist_author => [
+        'Yuki Shibazaki <shibayu36@gmail.com>',
+        'Kentaro Kuribayashi kentarok@gmail.com',
+    ],
+    dist_version_from => 'lib/Cinnamon.pm',
     license              => 'perl',
     dynamic_config       => 0,
 
-    build_requires       => {
-        'Test::More' => '0.98',
-        'Test::Requires' => 0,
-    },
     configure_requires   => { 'Module::Build' => '0.38' },
     requires             => {
         perl   => "$]",
@@ -29,8 +30,9 @@ my $build = Module::Build->new(
     build_requires       => {
         'Directory::Scratch' => 0,
         'Capture::Tiny'      => 0,
-        'Test::More'         => 0,
+        'Test::More'         => 0.98,
         'Test::Class'        => 0,
+        'Test::Requires'     => 0,
     },
 
     no_index    => { 'directory' => [ 'inc' ] },
@@ -45,12 +47,4 @@ my $build = Module::Build->new(
     create_readme  => 1,
     create_license => 1,
 );
-$build->meta_add({
-    resources => {
-        X_prepan => {
-            module_url => 'http://prepan.org/module/xxxxx',
-            author_url => 'http://prepan.org/user/xxxxxxx',
-        },
-    },
-});
 $build->create_build_script();
