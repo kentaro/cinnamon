@@ -39,7 +39,7 @@ sub run {
 
     my $role = shift @ARGV;
     my @tasks = @ARGV;
-    if (!$self->{info} && (!$role && @tasks == 0)) {
+    if (!$self->{info} && (!$role || scalar @tasks == 0)) {
         $self->print("please specify role and task\n");
         return $self->usage;
     }
