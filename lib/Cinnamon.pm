@@ -62,6 +62,8 @@ sub run {
         "[error]: %s",
         (join(', ', @error)   || ''),
     );
+
+    return (\@success, \@error);
 }
 
 !!1;

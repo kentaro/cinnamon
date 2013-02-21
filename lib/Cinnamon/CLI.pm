@@ -27,6 +27,7 @@ sub run {
         "i|info"     => \$self->{info},
         "c|config=s" => \$self->{config},
         "s|set=s%"   => \$self->{override_settings},
+        "I|ignore-errors" => \$self->{ignore_errors},
     );
     return $self->usage if $self->{help};
 
@@ -37,25 +38,31 @@ sub run {
     }
 
     my $role = shift @ARGV;
-    my $task = shift @ARGV;
-    if (!$self->{info} && (!$role && !$task)) {
+    my @tasks = @ARGV;
+    if (!$self->{info} && (!$role && @tasks == 0)) {
         $self->print("please specify role and task\n");
         return $self->usage;
     }
 
-    $self->cinnamon->run(
-        $role,
-        $task,
-        config            => $self->{config},
-        override_settings => $self->{override_settings},
-        info              => $self->{info},
-    );
+    @tasks = (undef) if (@tasks == 0);
+    for my $task (@tasks) {
+        my ($success, $error) = $self->cinnamon->run(
+            $role,
+            $task,
+            config            => $self->{config},
+            override_settings => $self->{override_settings},
+            info              => $self->{info},
+        );
+        last if (!defined $success || $self->{info});
+        last if ($error && @$error > 0 && !$self->{ignore_errors});
+        print "\n";
+    }
 }
 
 sub usage {
     my $self = shift;
     my $msg = <<"HELP";
-Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task>
+Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>
 HELP
     $self->print($msg);
 }
