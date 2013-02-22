@@ -29,6 +29,7 @@ my $build = Module::Build->new(
     },
     build_requires       => {
         'Directory::Scratch' => 0,
+        'Cwd::Guard'         => 0,
         'Capture::Tiny'      => 0,
         'Test::More'         => 0.98,
         'Test::Class'        => 0,
