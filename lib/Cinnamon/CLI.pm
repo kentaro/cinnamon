@@ -29,7 +29,7 @@ sub run {
         "s|set=s%"   => \$self->{override_settings},
         "I|ignore-errors" => \$self->{ignore_errors},
     );
-    return $self->usage if $self->{help};
+    return !$self->usage if $self->{help}; # return SUCCESS
 
     $self->{config} ||= 'config/deploy.pl';
     if (!-e $self->{config}) {
@@ -45,6 +45,7 @@ sub run {
     }
 
     @tasks = (undef) if (@tasks == 0);
+    my $error_occured = 0;
     for my $task (@tasks) {
         my ($success, $error) = $self->cinnamon->run(
             $role,
@@ -53,10 +54,13 @@ sub run {
             override_settings => $self->{override_settings},
             info              => $self->{info},
         );
-        last if (!defined $success || $self->{info});
-        last if ($error && @$error > 0 && !$self->{ignore_errors});
+        last if ($self->{info});
+        $error_occured = 1 if (!$error_occured && (!defined $success || $error && @$error > 0));
+        last if ($error_occured && !$self->{ignore_errors});
         print "\n";
     }
+
+    return !$error_occured; # ($error_occured) ? FAIL : SUCCESS
 }
 
 sub usage {
@@ -65,6 +69,7 @@ sub usage {
 Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>
 HELP
     $self->print($msg);
+    return;
 }
 
 sub print {

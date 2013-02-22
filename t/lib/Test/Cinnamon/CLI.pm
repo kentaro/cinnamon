@@ -37,9 +37,11 @@ sub dir {
 
 sub run {
     my ($self, @args) = @_;
+    my $success;
     ($self->{system_output}, $self->{system_error}) = capture {
-        Cinnamon::CLI->new->run(@args);
+        $success = Cinnamon::CLI->new->run(@args);
     };
+    return $success;
 }
 
 sub system_output {

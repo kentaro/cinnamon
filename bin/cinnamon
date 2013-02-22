@@ -3,5 +3,6 @@ use strict;
 use warnings;
 use Cinnamon;
 use Cinnamon::CLI;
-
-Cinnamon::CLI->new->run(@ARGV);
+use POSIX qw/:stdlib_h/;
+my $exit_status = ( Cinnamon::CLI->new->run(@ARGV) ) ? EXIT_SUCCESS : EXIT_FAILURE;
+exit $exit_status;
