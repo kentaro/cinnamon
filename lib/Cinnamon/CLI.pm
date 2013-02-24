@@ -5,6 +5,8 @@ use warnings;
 use Getopt::Long;
 use Cinnamon;
 
+use constant { SUCCESS => 0, ERROR => 1 };
+
 sub new {
     my $class = shift;
     bless { }, $class;
@@ -29,22 +31,32 @@ sub run {
         "s|set=s%"   => \$self->{override_settings},
         "I|ignore-errors" => \$self->{ignore_errors},
     );
-    return $self->usage if $self->{help};
 
+    # --help option
+    if ($self->{help}) {
+        $self->usage;
+        return SUCCESS;
+    }
+
+    # check config exists
     $self->{config} ||= 'config/deploy.pl';
     if (!-e $self->{config}) {
         $self->print("cannot find config file for deploy : $self->{config}\n");
-        return $self->usage;
+        $self->usage;
+        return ERROR;
     }
 
+    # check role and task exists
     my $role = shift @ARGV;
     my @tasks = @ARGV;
     if (!$self->{info} && (!$role || scalar @tasks == 0)) {
         $self->print("please specify role and task\n");
-        return $self->usage;
+        $self->usage;
+        return ERROR;
     }
 
     @tasks = (undef) if (@tasks == 0);
+    my $error_occured = 0;
     for my $task (@tasks) {
         my ($success, $error) = $self->cinnamon->run(
             $role,
@@ -53,10 +65,17 @@ sub run {
             override_settings => $self->{override_settings},
             info              => $self->{info},
         );
-        last if (!defined $success || $self->{info});
-        last if ($error && @$error > 0 && !$self->{ignore_errors});
+        last if ($self->{info});
+
+        # check execution error
+        $error_occured ||= ! defined $success;
+        $error_occured ||= scalar @$error > 0;
+
+        last if ($error_occured && !$self->{ignore_errors});
         print "\n";
     }
+
+    return $error_occured ? ERROR : SUCCESS;
 }
 
 sub usage {
