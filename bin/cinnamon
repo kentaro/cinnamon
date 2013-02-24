@@ -4,4 +4,5 @@ use warnings;
 use Cinnamon;
 use Cinnamon::CLI;
 
-Cinnamon::CLI->new->run(@ARGV);
+my $exit_status = Cinnamon::CLI->new->run(@ARGV);
+exit $exit_status;
