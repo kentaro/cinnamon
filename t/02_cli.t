@@ -14,7 +14,7 @@ sub setup : Test(setup) {
 
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
-    $app->run('--help');
+    ok $app->run('--help');
     is $app->system_error, "Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>\n";
 }
 
@@ -25,7 +25,7 @@ use Cinnamon::DSL;
 role production  => sub { 'example.com'  }, { foo => 'bar' };
 task update      => sub { 'do something' };
 CONFIG
-    $app->run('--config=config/deploy.pl', '--info');
+    ok $app->run('--config=config/deploy.pl', '--info');
     is $app->system_output, <<"OUTPUT";
 \e[37m---
 roles:
@@ -41,7 +41,7 @@ OUTPUT
 
 sub _no_config : Tests {
     my $app = Test::Cinnamon::CLI::cli();
-    $app->run('role', 'task');
+    ok ! $app->run('role', 'task');
     is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>\n";
 }
 
@@ -55,7 +55,7 @@ task echo_user => sub {
     print(get 'user');
 };
 CONFIG
-    $app->run('test', 'echo_user');
+    ok $app->run('test', 'echo_user');
     like $app->system_output, qr{app};
 }
 
@@ -69,7 +69,7 @@ task echo_user => sub {
     print(get 'user');
 };
 CONFIG
-    $app->run('--config=config/deploy_changed.pl', 'test', 'echo_user');
+    ok $app->run('--config=config/deploy_changed.pl', 'test', 'echo_user');
     like $app->system_output, qr{app};
 }
 
@@ -83,7 +83,7 @@ task args => sub {
     printf "%s\t%s\n", get('args1'), get('args2');
 };
 CONFIG
-    $app->run('test', 'args', '-s', 'args1=foo', '-s', 'args2=bar');
+    ok $app->run('test', 'args', '-s', 'args1=foo', '-s', 'args2=bar');
     like $app->system_output, qr{foo\tbar};
 }
 
@@ -101,7 +101,7 @@ task echo_deploy_to => sub {
     print(get 'deploy_to');
 };
 CONFIG
-    my $exit_status = $app->run('test', 'echo_user', 'echo_deploy_to');
+    ok $app->run('test', 'echo_user', 'echo_deploy_to');
     like $app->system_output, qr{app};
     like $app->system_output, qr{deploy_to};
 }
@@ -120,8 +120,13 @@ task echo_deploy_to => sub {
     print(get 'deploy_to');
 };
 CONFIG
-    my $exit_status = $app->run('test', 'die_user', 'echo_deploy_to');
+    ok ! $app->run('test', 'die_user', 'echo_deploy_to');
     like $app->system_error, qr{app};
+    unlike $app->system_output, qr{deploy_to};
+
+    # specified undefined task
+    ok ! $app->run('test', 'undef_task', 'echo_deploy_to');
+    like $app->system_error, qr{undefined task : 'undef_task'};
     unlike $app->system_output, qr{deploy_to};
 }
 
@@ -139,7 +144,13 @@ task echo_deploy_to => sub {
     print(get 'deploy_to');
 };
 CONFIG
-    my $exit_status = $app->run('--ignore-errors', 'test', 'die_user', 'echo_deploy_to');
+    ok ! $app->run('--ignore-errors', 'test', 'die_user', 'echo_deploy_to');
+    like $app->system_error, qr{app};
+    like $app->system_output, qr{deploy_to};
+
+    # specified undefined task
+    ok ! $app->run('--ignore-errors', 'test', 'undef_task', 'die_user', 'echo_deploy_to');
+    like $app->system_error, qr{undefined task : 'undef_task'};
     like $app->system_error, qr{app};
     like $app->system_output, qr{deploy_to};
 }
