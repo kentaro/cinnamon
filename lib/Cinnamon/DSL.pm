@@ -93,7 +93,8 @@ sub sudo (@) {
         print "\n";
     }
 
-    run {sudo => 1, password => $password}, @cmd;
+    my $tty = Cinnamon::Config::get('tty');
+    run {sudo => 1, password => $password, tty => $tty}, @cmd;
 }
 
 !!1;

@@ -54,4 +54,17 @@ subtest 'sudo run success' => sub {
     ok !$res->{has_error};
 };
 
+subtest 'sudo run with tty' => sub {
+    local *Net::OpenSSH::capture2 = sub {
+        my ($self, $opt, $cmd) = @_;
+        return ($cmd, $opt);
+    };
+    my $remote = Cinnamon::Remote->new(host => 'localhost', user => 'app');
+    $remote->connection->error('error');
+    my $res = $remote->execute({sudo => 1, password => 'password', tty => 1}, "ls", "/");
+    is $res->{stdout}, "sudo -Sk ls /";
+    is $res->{stderr}->{stdin_data}, "password\n";
+    ok !$res->{has_error};
+};
+
 done_testing();
