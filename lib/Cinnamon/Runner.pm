@@ -6,13 +6,13 @@ use Cinnamon::Logger;
 use Cinnamon::Config;
 
 sub start {
-    my ($class, $hosts, $task, @args) = @_;
+    my ($class, $hosts, $task, $role, @args) = @_;
 
     my %result;
     for my $host (@$hosts) {
         $result{$host} = +{ error => 0 };
 
-        eval { $task->($host, @args) };
+        eval { $task->($host, $role, @args) };
 
         if ($@) {
             chomp $@;
@@ -25,8 +25,8 @@ sub start {
 }
 
 sub execute {
-    my ($class, $host, $task, @args) = @_;
-    $task->($host, @args);
+    my ($class, $host, $role, $task, @args) = @_;
+    $task->($host, $role, @args);
 }
 
 !!1;
