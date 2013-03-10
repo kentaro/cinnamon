@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.08    Sun Mar 10 21:42:09 2013
+    - support tty
+
 0.07    Mon Feb 25 00:06:06 2013
     - cli returns error exit code if command failed. Thanks to hayajo@github
 

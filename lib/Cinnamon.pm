@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010_001;
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 use YAML ();
 use Class::Load ();
