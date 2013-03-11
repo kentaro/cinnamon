@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.09    Mon Mar 11 22:53:35 2013
+    - fixed wrong message
+
 0.08    Sun Mar 10 21:42:09 2013
     - support tty
 
