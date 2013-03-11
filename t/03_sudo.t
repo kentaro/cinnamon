@@ -9,22 +9,25 @@ use base qw(Test::Class);
 use Test::Cinnamon::CLI;
 use Cinnamon::DSL ();
 
+{
+    package TESTIN;
+    sub TIEHANDLE {
+        my $class = shift;
+        my @in_lines = map { "$_\n" } @_;
+        bless \@in_lines, $class;
+    }
+    sub READLINE { shift @{ $_[0] } }
+}
+
 sub setup : Test(setup) {
     Cinnamon::Config::reset;
 }
 
 sub _sudo_passowrd : Tests {
-    {
-        package TESTIN;
-        sub TIEHANDLE {
-            my $class = shift;
-            my @in_lines = map { "$_\n" } @_;
-            bless \@in_lines, $class;
-        }
-        sub READLINE { shift @{ $_[0] } }
-    }
-    tie local *STDIN, 'TESTIN', qw/mypassword/;
-    is Cinnamon::DSL::_sudo_password('mypassowrd'), 'mypassword';
+    my $pass = "mypassword";
+    tie local *STDIN, 'TESTIN', $pass;
+    is Cinnamon::DSL::_sudo_password(), $pass;
+    is Cinnamon::Config::get('password'), $pass;
 }
 
 sub _print_execute_command_before_enter_sudo_passowrd : Tests {
