@@ -16,7 +16,7 @@ sub execute {
             $line;
     }
     for my $line (split "\n", $stderr) {
-        log info => sprintf "[localhost :: stdout] %s",
+        log info => sprintf "[localhost :: stderr] %s",
             $line;
     }
 
