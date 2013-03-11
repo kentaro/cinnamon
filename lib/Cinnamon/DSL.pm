@@ -66,6 +66,12 @@ sub run (@) {
 
     log info => sprintf "[%s :: executing] %s", $host, join(' ', @cmd);
 
+    if ($opt && $opt->{sudo}) {
+        my $password = Cinnamon::Config::get('password');
+        $password = _sudo_password() unless (defined $password);
+        $opt->{password} = $password;
+    }
+
     if (ref $_ eq 'Cinnamon::Remote') {
         $result = $_->execute($opt, @cmd);
     }
@@ -82,19 +88,19 @@ sub run (@) {
 
 sub sudo (@) {
     my (@cmd) = @_;
-
-    my $password = Cinnamon::Config::get('password');
-    unless (defined $password) {
-        print "Enter sudo password: ";
-        ReadMode "noecho";
-        chomp($password = ReadLine 0);
-        Cinnamon::Config::set('password' => $password);
-        ReadMode 0;
-        print "\n";
-    }
-
     my $tty = Cinnamon::Config::get('tty');
-    run {sudo => 1, password => $password, tty => !! $tty}, @cmd;
+    run {sudo => 1, tty => !! $tty}, @cmd;
+}
+
+sub _sudo_password {
+    my $password;
+    print "Enter sudo password: ";
+    ReadMode "noecho";
+    chomp($password = ReadLine 0);
+    Cinnamon::Config::set('password' => $password);
+    ReadMode 0;
+    print "\n";
+    return $password;
 }
 
 !!1;
