@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.11    Thu Mar 14 08:16:50 2013
+    - fixed typo in a document
+
 0.10    Wed Mar 13 20:38:13 2013
     - show executing command before input sudo password
 
