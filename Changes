@@ -1,16 +1,16 @@
 Revision history for Perl extension Cinnamon
 
 0.11    Thu Mar 14 08:16:50 2013
-    - fixed typo in a document
+    - fixed typo in a document. Thanks to syohex@github
 
 0.10    Wed Mar 13 20:38:13 2013
-    - show executing command before input sudo password
+    - show executing command before input sudo password. Thanks to hayajo@github
 
 0.09    Mon Mar 11 22:53:35 2013
-    - fixed wrong message
+    - fixed wrong message. Thanks to hayajo@github
 
 0.08    Sun Mar 10 21:42:09 2013
-    - support tty
+    - support tty. Thanks to hayajo@github
 
 0.07    Mon Feb 25 00:06:06 2013
     - cli returns error exit code if command failed. Thanks to hayajo@github
