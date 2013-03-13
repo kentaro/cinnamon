@@ -21,6 +21,7 @@ README
 t/00_compile.t
 t/01_remote.t
 t/02_cli.t
+t/03_sudo.t
 t/lib/Test/Cinnamon/CLI.pm
 xt/01_podspell.t
 xt/02_perlcritic.t
