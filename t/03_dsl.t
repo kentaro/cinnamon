@@ -59,4 +59,30 @@ CONFIG
     };
 }
 
+sub remote : Tests {
+    my $app = Test::Cinnamon::CLI::cli();
+    $app->dir->touch("config/deploy.pl", <<'CONFIG');
+use Cinnamon::DSL;
+set user => 'app';
+role test => 'localhost';
+task test_remote => sub {
+    my ($host, @args) = @_;
+    remote {
+        local $_ = \"test"; # SCALAR_REF
+        run "command01";
+        sudo "command02";
+        local $_ = [qw/foo bar buz/]; # ARRAY_REF
+        run "command01";
+        sudo "command02";
+    } $host;
+};
+CONFIG
+    no strict 'refs';
+    no warnings 'redefine';
+    local *Cinnamon::DSL::run = sub {
+        is ref $_, 'Cinnamon::Remote';
+    };
+    $app->run('test', 'test_remote');
+}
+
 __PACKAGE__->runtests;

@@ -45,10 +45,29 @@ sub task ($$) {
 sub remote (&$) {
     my ($code, $host) = @_;
 
-    local $_ = Cinnamon::Remote->new(
+    my $executor = Cinnamon::Remote->new(
         host => $host,
         user => Cinnamon::Config::user,
     );
+
+    no strict 'refs';
+    no warnings 'redefine';
+
+    my $caller   = caller;
+
+    my $run      = "${caller}::run";
+    my $orig_run = *{$run}{CODE} or Carp::croak "$run is not implemented";
+    local *{$run} = sub (@) {
+        local $_ = $executor;
+        $orig_run->(@_);
+    };
+
+    my $sudo     = "${caller}::sudo";
+    my $orig_sudo = *{$sudo}{CODE} or Carp::croak "$sudo is not implemented";
+    local *{$sudo} = sub (@) {
+        local *{ __PACKAGE__ . '::run' } = *{$run};
+        $orig_sudo->(@_);
+    };
 
     $code->($host);
 }
