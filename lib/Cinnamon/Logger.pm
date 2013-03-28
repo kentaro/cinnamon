@@ -11,6 +11,8 @@ our @EXPORT = qw(
     log
 );
 
+our $OUTPUT_COLOR = 1;
+
 my %COLOR = (
     success => 'green',
     error   => 'red',
@@ -19,7 +21,7 @@ my %COLOR = (
 
 sub log ($$) {
     my ($type, $message) = @_;
-    my $color ||= $COLOR{$type};
+    my $color = !!$OUTPUT_COLOR ? $COLOR{$type} : 0;
 
     $message = Term::ANSIColor::colored $message, $color if $color;
     $message .= "\n";
