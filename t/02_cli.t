@@ -157,4 +157,22 @@ CONFIG
     like $app->system_output, qr{deploy_to};
 }
 
+sub _specifies_colorized_output : Tests {
+    require Term::ANSIColor;
+    my $app = Test::Cinnamon::CLI::cli();
+    $app->dir->touch("config/deploy.pl", <<CONFIG);
+use Cinnamon::DSL;
+role colorful   => 'localhost';
+task echo_color => sub { printf 'color me surprised' };
+CONFIG
+
+    my $output = '[error]: ';
+    my $color  = Term::ANSIColor::colored($output, 'red');
+    is $app->run('colorful', 'echo_color'), CLI_SUCCESS;
+    is $app->system_error, $color . "\n";
+
+    is $app->run('--no-color', 'colorful', 'echo_color'), CLI_SUCCESS;
+    is $app->system_error, $output . "\n";
+}
+
 __PACKAGE__->runtests;

@@ -4,6 +4,7 @@ use warnings;
 
 use Getopt::Long;
 use Cinnamon;
+use Cinnamon::Logger;
 
 use constant { SUCCESS => 0, ERROR => 1 };
 
@@ -14,7 +15,10 @@ sub new {
 
 sub cinnamon {
     my $self = shift;
-    $self->{cinnamon} ||= Cinnamon->new;
+    $self->{cinnamon} ||= do {
+        $Cinnamon::Logger::OUTPUT_COLOR = !$self->{no_color};
+        Cinnamon->new;
+    };
 }
 
 sub run {
@@ -25,11 +29,12 @@ sub run {
         config => ["no_ignore_case", "pass_through"],
     );
     $p->getoptions(
-        "h|help"     => \$self->{help},
-        "i|info"     => \$self->{info},
-        "c|config=s" => \$self->{config},
-        "s|set=s%"   => \$self->{override_settings},
+        "h|help"          => \$self->{help},
+        "i|info"          => \$self->{info},
+        "c|config=s"      => \$self->{config},
+        "s|set=s%"        => \$self->{override_settings},
         "I|ignore-errors" => \$self->{ignore_errors},
+        "no-color"        => \$self->{no_color},
     );
 
     # --help option
