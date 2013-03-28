@@ -7,7 +7,7 @@ use IPC::Run ();
 use Cinnamon::Logger;
 
 sub execute {
-    my ($class, @cmd) = @_;
+    my ($class, $opt, @cmd) = @_;
     my $result = IPC::Run::run \@cmd, \my $stdin, \my $stdout, \my $stderr;
     chomp for ($stdout, $stderr);
 

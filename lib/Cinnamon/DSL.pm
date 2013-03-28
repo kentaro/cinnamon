@@ -45,10 +45,15 @@ sub task ($$) {
 sub remote (&$) {
     my ($code, $host) = @_;
 
-    local $_ = Cinnamon::Remote->new(
+    my $remote = Cinnamon::Remote->new(
         host => $host,
         user => Cinnamon::Config::user,
     );
+
+    no strict 'refs';
+    no warnings 'redefine';
+    local *_host    = sub { $remote->host };
+    local *_execute = sub { $remote->execute(@_) };
 
     $code->($host);
 }
@@ -61,10 +66,7 @@ sub run (@) {
     my ($stdout, $stderr);
     my $result;
 
-    my $is_remote = ref $_ eq 'Cinnamon::Remote';
-    my $host = $is_remote ? $_->host : 'localhost';
-
-    log info => sprintf "[%s :: executing] %s", $host, join(' ', @cmd);
+    log info => sprintf "[%s :: executing] %s", _host(), join(' ', @cmd);
 
     if ($opt && $opt->{sudo}) {
         my $password = Cinnamon::Config::get('password');
@@ -72,12 +74,7 @@ sub run (@) {
         $opt->{password} = $password;
     }
 
-    if (ref $_ eq 'Cinnamon::Remote') {
-        $result = $_->execute($opt, @cmd);
-    }
-    else {
-        $result = Cinnamon::Local->execute(@cmd);
-    }
+    $result = _execute($opt, @cmd);
 
     if ($result->{has_error}) {
         die sprintf "error status: %d", $result->{error};
@@ -102,5 +99,8 @@ sub _sudo_password {
     print "\n";
     return $password;
 }
+
+sub _host    { 'localhost' }
+sub _execute { Cinnamon::Local->execute(@_) }
 
 !!1;
