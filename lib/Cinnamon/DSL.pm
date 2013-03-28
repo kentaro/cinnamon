@@ -50,7 +50,6 @@ sub remote (&$) {
         user => Cinnamon::Config::user,
     );
 
-    no strict 'refs';
     no warnings 'redefine';
     local *_host    = sub { $remote->host };
     local *_execute = sub { $remote->execute(@_) };
