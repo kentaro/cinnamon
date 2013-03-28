@@ -64,23 +64,34 @@ sub remote : Tests {
     $app->dir->touch("config/deploy.pl", <<'CONFIG');
 use Cinnamon::DSL;
 set user => 'app';
+set password => 'password';
 role test => 'localhost';
 task test_remote => sub {
     my ($host, @args) = @_;
+
+    run 'command', 'foo';
+    sudo 'command', 'foo';
+
     remote {
-        local $_ = \"test"; # SCALAR_REF
-        run "command01";
-        sudo "command02";
-        local $_ = [qw/foo bar buz/]; # ARRAY_REF
-        run "command01";
-        sudo "command02";
+        run 'command', 'bar';
+        sudo 'command', 'bar';
     } $host;
+
+    run 'command', 'foo';
+    sudo 'command', 'foo';
 };
 CONFIG
     no strict 'refs';
     no warnings 'redefine';
-    local *Cinnamon::DSL::run = sub {
-        is ref $_, 'Cinnamon::Remote';
+    local *Cinnamon::Local::execute = sub {
+        my ($self, undef, @cmd) = @_;
+        is_deeply \@cmd, [qw/command foo/];
+        +{}
+    };
+    local *Cinnamon::Remote::execute = sub {
+        my ($self, $opt, @cmd) = @_;
+        is_deeply \@cmd, [qw/command bar/];
+        +{}
     };
     $app->run('test', 'test_remote');
 }

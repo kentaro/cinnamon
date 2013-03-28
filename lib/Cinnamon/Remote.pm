@@ -21,8 +21,7 @@ sub connection {
 sub host { $_[0]->{host} }
 
 sub execute {
-    my ($self, @cmd) = @_;
-    my $opt = shift @cmd;
+    my ($self, $opt, @cmd) = @_;
     my $host = $self->host || '';
     my $conn = $self->connection;
     my $exec_opt = {};
