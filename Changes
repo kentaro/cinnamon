@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.12    Thu Mar 28 21:00:10 2013
+    - fixed to run correct if overwrite $_ in remote block
+
 0.11    Thu Mar 14 08:16:50 2013
     - fixed typo in a document. Thanks to syohex@github
 
