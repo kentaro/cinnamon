@@ -26,6 +26,7 @@ my $build = Module::Build->new(
         'AnyEvent'        => 0,
         'POSIX'           => 0,
         'YAML'            => 0,
+        'String::ShellQuote' => 0,
     },
     build_requires       => {
         'Directory::Scratch' => 0,
@@ -34,6 +35,8 @@ my $build = Module::Build->new(
         'Test::More'         => 0.98,
         'Test::Class'        => 0,
         'Test::Requires'     => 0,
+        'Test::SharedFork'   => 0,
+        'Test::Flatten'      => 0,
     },
 
     no_index    => { 'directory' => [ 'inc' ] },

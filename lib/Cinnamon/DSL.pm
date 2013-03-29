@@ -7,6 +7,7 @@ use Cinnamon::Config;
 use Cinnamon::Local;
 use Cinnamon::Remote;
 use Cinnamon::Logger;
+use Cinnamon::CommandBuilder;
 use Term::ReadKey;
 
 our @EXPORT = qw(
@@ -59,13 +60,13 @@ sub remote (&$) {
 
 sub run (@) {
     my (@cmd) = @_;
-    my $opt;
-    $opt = shift @cmd if ref $cmd[0] eq 'HASH';
+    my $opt = (ref $cmd[0] eq 'HASH') ? shift @cmd : {};
 
     my ($stdout, $stderr);
     my $result;
 
-    log info => sprintf "[%s :: executing] %s", _host(), join(' ', @cmd);
+    my $cmd_str = Cinnamon::CommandBuilder->new(%$opt)->build(@cmd);
+    log info => sprintf "[%s :: executing] %s", _host(), $cmd_str;
 
     if ($opt && $opt->{sudo}) {
         my $password = Cinnamon::Config::get('password');
@@ -100,6 +101,6 @@ sub _sudo_password {
 }
 
 sub _host    { 'localhost' }
-sub _execute { Cinnamon::Local->execute(@_) }
+sub _execute { Cinnamon::Local->new->execute(@_) }
 
 !!1;
