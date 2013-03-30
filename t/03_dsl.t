@@ -1,6 +1,8 @@
 use strict;
 use warnings;
 use Test::More;
+use Test::SharedFork;
+use Test::Flatten;
 use Path::Class;
 use lib file(__FILE__)->dir->file('lib')->stringify;
 
@@ -8,6 +10,7 @@ use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
 use Cinnamon::DSL ();
+use Cinnamon::CommandBuilder;
 
 {
     package TESTIN;
@@ -52,9 +55,10 @@ CONFIG
             $orig_log->(@_);
         };
         local *Cinnamon::DSL::_sudo_password = sub {
-            like $out, qr/\[localhost :: executing\] command/;
+            my $cmd_str = Cinnamon::CommandBuilder->new(sudo => 1)->build('command');
+            like $out, qr/\[localhost :: executing\] $cmd_str/;
         };
-        local *Cinnamon::Local::execute = sub {};
+        local *Cinnamon::Local::_execute = sub {};
         $app->run('test', 'sudo_cmd');
     };
 }
@@ -81,17 +85,17 @@ task test_remote => sub {
     sudo 'command', 'foo';
 };
 CONFIG
-    no strict 'refs';
+
     no warnings 'redefine';
-    local *Cinnamon::Local::execute = sub {
-        my ($self, undef, @cmd) = @_;
-        is_deeply \@cmd, [qw/command foo/];
-        +{}
-    };
-    local *Cinnamon::Remote::execute = sub {
+    local *Cinnamon::Local::_execute = sub {
         my ($self, $opt, @cmd) = @_;
-        is_deeply \@cmd, [qw/command bar/];
-        +{}
+        my $c = Cinnamon::CommandBuilder->new($opt);
+        is_deeply \@cmd, [ $c->build(@cmd) ];
+    };
+    local *Cinnamon::Remote::_execute = sub {
+        my ($self, $opt, @cmd) = @_;
+        my $c = Cinnamon::CommandBuilder->new($opt);
+        is_deeply \@cmd, [ $c->build(@cmd) ];
     };
     $app->run('test', 'test_remote');
 }
