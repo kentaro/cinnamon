@@ -26,6 +26,7 @@ my $build = Module::Build->new(
         'AnyEvent'        => 0,
         'POSIX'           => 0,
         'YAML'            => 0,
+        'Coro'            => 0,
     },
     build_requires       => {
         'Directory::Scratch' => 0,
