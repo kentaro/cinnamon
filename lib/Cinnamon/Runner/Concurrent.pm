@@ -14,10 +14,8 @@ sub start {
     $hosts = [ @$hosts ];
 
     my $task_name           = Cinnamon::Config::get('task');
-    my $concurrency_setting = Cinnamon::Config::get('max_concurrency')
-        || {};
-    my $concurrency         = $concurrency_setting->{$task_name}
-        || scalar @$hosts;
+    my $concurrency_setting = Cinnamon::Config::get('max_concurrency') || {};
+    my $concurrency         = $concurrency_setting->{$task_name} || scalar @$hosts;
 
     while (my @target_hosts = splice @$hosts, 0, $concurrency) {
         my @coros;
