@@ -1,5 +1,8 @@
 Revision history for Perl extension Cinnamon
 
+0.13_01 Sat Apr 13 19:57:15 2013
+    - concurrency support
+
 0.12    Thu Mar 28 21:00:10 2013
     - fixed to run correct if overwrite $_ in remote block
 

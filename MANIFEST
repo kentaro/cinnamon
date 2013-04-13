@@ -13,6 +13,7 @@ lib/Cinnamon/Local.pm
 lib/Cinnamon/Logger.pm
 lib/Cinnamon/Remote.pm
 lib/Cinnamon/Runner.pm
+lib/Cinnamon/Runner/Concurrent.pm
 LICENSE
 MANIFEST			This list of files
 META.json
