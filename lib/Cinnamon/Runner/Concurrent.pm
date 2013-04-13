@@ -14,12 +14,14 @@ sub start {
     $hosts = [ @$hosts ];
 
     my $task_name           = Cinnamon::Config::get('task');
-    my $concurrency_setting = Cinnamon::Config::get('max_concurrency') || {};
+    my $concurrency_setting = Cinnamon::Config::get('max_concurrency')
+        || {};
     my $concurrency         = $concurrency_setting->{$task_name}
         || scalar @$hosts;
 
     while (my @target_hosts = splice @$hosts, 0, $concurrency) {
         my @coros;
+
         for my $host (@target_hosts) {
             my $coro = async {
                 my $result = $class->execute($host, $task, @args);
@@ -28,6 +30,7 @@ sub start {
 
             push @coros, $coro;
         }
+
         $_->join for @coros;
     }
 
