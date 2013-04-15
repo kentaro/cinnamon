@@ -28,7 +28,7 @@ sub run {
 
     my $hosts    = Cinnamon::Config::get_role;
     my $task_def = Cinnamon::Config::get_task;
-    my $runner   = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner::Concurrent';
+    my $runner   = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
 
     unless (defined $hosts) {
         log 'error', "undefined role : '$role'";
@@ -323,6 +323,25 @@ whereas done on localhost without it.
 
 Remote login username is retrieved by C<get 'user'> or C<`whoami`>
 command. Set appropriate username in advance if needed.
+
+=head2 Configuration Variables
+
+Cinnamon configuration is managed by set function.  You can customize following variables.
+
+=head3 user
+
+user name which is used for login to server.
+
+=head3 concurrency
+
+Max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
+
+=over 4
+
+    set concurrency => {
+        restart        => 1,
+        'server:setup' => 2,
+    };
 
 =back
 
