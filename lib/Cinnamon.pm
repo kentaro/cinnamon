@@ -332,13 +332,13 @@ Cinnamon configuration is managed by set function.  You can customize following 
 
 user name which is used for login to server.
 
-=head3 max_concurrency
+=head3 concurrency
 
-the max number of concurrent execution of tasks.  the task which is not specified max_concurrency, is executed in parallel by all the hosts.
+the max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
 
 =over 4
 
-    set max_concurrency => {
+    set concurrency => {
         restart        => 1,
         'server:setup' => 2,
     };
