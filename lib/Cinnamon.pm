@@ -334,7 +334,7 @@ user name which is used for login to server.
 
 =head3 concurrency
 
-the max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
+Max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
 
 =over 4
 
