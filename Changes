@@ -1,7 +1,5 @@
 Revision history for Perl extension Cinnamon
 
-{{$NEXT}}
-
 0.20    Tue Apr 16 19:27:04 2013
     - official concurrency support
     - NOTICE: Since current version, a task is executed in parallel by all the hosts by default.  See documentation for details.
