@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use 5.010_001;
 
-our $VERSION = '0.20';
+our $VERSION = '0.21';
 
 use YAML ();
 use Class::Load ();
@@ -314,6 +314,8 @@ Executes a command as well, but under I<sudo> environment.
       run  'git', 'pull';
       sudo '/path/to/httpd', 'restart';
   } $host;
+
+=back
 
 Connects to the remote C<$host> and executes the C<$code> there.
 
