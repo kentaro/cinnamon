@@ -1,0 +1,92 @@
+{
+   "abstract" : "A minimalistic deploy tool",
+   "author" : [
+      "=over 4"
+   ],
+   "dynamic_config" : 0,
+   "generated_by" : "Minilla/v0.0.53, CPAN::Meta::Converter version 2.130880",
+   "license" : [
+      "perl_5"
+   ],
+   "meta-spec" : {
+      "url" : "http://search.cpan.org/perldoc?CPAN::Meta::Spec",
+      "version" : "2"
+   },
+   "name" : "Cinnamon",
+   "no_index" : {
+      "directory" : [
+         "t",
+         "xt",
+         "inc",
+         "share",
+         "eg",
+         "examples"
+      ]
+   },
+   "prereqs" : {
+      "build" : {
+         "requires" : {
+            "Capture::Tiny" : "0",
+            "Cwd::Guard" : "0",
+            "Directory::Scratch" : "0",
+            "Test::Class" : "0",
+            "Test::More" : "0.98",
+            "Test::Requires" : "0"
+         }
+      },
+      "configure" : {
+         "requires" : {
+            "CPAN::Meta" : "0",
+            "CPAN::Meta::Prereqs" : "0",
+            "Module::Build" : "0.38"
+         }
+      },
+      "develop" : {
+         "requires" : {
+            "Pod::Wordlist::hanekomu" : "0",
+            "Test::CPAN::Meta" : "0",
+            "Test::MinimumVersion" : "0.10108",
+            "Test::Pod" : "1.41",
+            "Test::Spelling" : "0"
+         }
+      },
+      "runtime" : {
+         "requires" : {
+            "AnyEvent" : "0",
+            "Class::Load" : "0",
+            "Coro" : "0",
+            "Getopt::Long" : "0",
+            "IPC::Run" : "0",
+            "Log::Dispatch" : "0",
+            "Net::OpenSSH" : "0",
+            "POSIX" : "0",
+            "Term::ANSIColor" : "0",
+            "Term::ReadKey" : "0",
+            "YAML" : "0",
+            "parent" : "0",
+            "perl" : "5.014002"
+         }
+      }
+   },
+   "release_status" : "unstable",
+   "resources" : {
+      "bugtracker" : {
+         "web" : "https://github.com/kentaro/cinnamon/issues"
+      },
+      "homepage" : "https://github.com/kentaro/cinnamon",
+      "repository" : {
+         "type" : "git",
+         "url" : "git://github.com/kentaro/cinnamon.git",
+         "web" : "https://github.com/kentaro/cinnamon"
+      }
+   },
+   "version" : "0.20",
+   "x_contributors" : [
+      "wakabatan <wakabatan@localhost.localdomain>",
+      "hatyuki <hatyuki29@gmail.com>",
+      "Syohei YOSHIDA <syohex@gmail.com>",
+      "hayajo <hayajo@cpan.org>",
+      "Kentaro Kuribayashi <kentarok@gmail.com>",
+      "shiba_yu36 <shibayu36@gmail.com>"
+   ]
+}
