@@ -211,53 +211,53 @@ simple as possible, and I don't want to add too many commands:
             sudo '/path/to/httpd', 'restart';
         } $host;
 
-    Connects to the remote `$host` and executes the `$code` there.
+Connects to the remote `$host` and executes the `$code` there.
 
-    Where `run` and `sudo` commands to be executed depends on that
-    context. They are done on the remote host when set in `remote` block,
-    whereas done on localhost without it.
+Where `run` and `sudo` commands to be executed depends on that
+context. They are done on the remote host when set in `remote` block,
+whereas done on localhost without it.
 
-    Remote login username is retrieved by `get 'user'` or ``whoami``
-    command. Set appropriate username in advance if needed.
+Remote login username is retrieved by `get 'user'` or ``whoami``
+command. Set appropriate username in advance if needed.
 
-    ## Configuration Variables
+## Configuration Variables
 
-    Cinnamon configuration is managed by set function.  You can customize following variables.
+Cinnamon configuration is managed by set function.  You can customize following variables.
 
-    ### user
+### user
 
-    user name which is used for login to server.
+user name which is used for login to server.
 
-    ### concurrency
+### concurrency
 
-    Max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
+Max number of concurrent execution of tasks.  the task which is not specified concurrency, is executed in parallel by all the hosts.
 
-            set concurrency => {
-                restart        => 1,
-                'server:setup' => 2,
-            };
+        set concurrency => {
+            restart        => 1,
+            'server:setup' => 2,
+        };
 
-    # REPOSITORY
+# REPOSITORY
 
-    https://github.com/kentaro/cinnamon
+https://github.com/kentaro/cinnamon
 
-    # AUTHOR
+# AUTHOR
 
-    - Kentaro Kuribayashi <kentarok@gmail.com>
-    - Yuki Shibazaki <shibayu36 at gmail.com>
+- Kentaro Kuribayashi <kentarok@gmail.com>
+- Yuki Shibazaki <shibayu36 at gmail.com>
 
-    # SEE ALSO
+# SEE ALSO
 
-    - Tutorial (Japanese)
+- Tutorial (Japanese)
 
-        [http://d.hatena.ne.jp/naoya/20130118/1358477523](http://d.hatena.ne.jp/naoya/20130118/1358477523)
+    [http://d.hatena.ne.jp/naoya/20130118/1358477523](http://d.hatena.ne.jp/naoya/20130118/1358477523)
 
-    - [capistrano](http://search.cpan.org/perldoc?capistrano)
-    - [Archer](http://search.cpan.org/perldoc?Archer)
+- [capistrano](http://search.cpan.org/perldoc?capistrano)
+- [Archer](http://search.cpan.org/perldoc?Archer)
 
-    # LICENSE
+# LICENSE
 
-    Copyright (C) Kentaro Kuribayashi
+Copyright (C) Kentaro Kuribayashi
 
-    This library is free software; you can redistribute it and/or modify
-    it under the same terms as Perl itself.
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
