@@ -2,6 +2,9 @@ Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
 
+0.22 2013-05-25T05:41:30Z
+    - fix to handle \r\n in output correctly.  Thanks to yteraoka.
+
 0.21 2013-04-16T12:00:26Z
     - Minillize
 
