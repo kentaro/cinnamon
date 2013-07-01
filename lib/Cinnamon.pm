@@ -196,8 +196,6 @@ parameters by get DSL.
 
 =head3 task ( I<$taskname: Str> => (I<\%tasks: Hash[String => CODE]> | I<$sub: CODE>) )
 
-=over 4
-
   task update => sub {
       my ($host) = @_;
       my $hoge = get 'hoge'; # parameter set in global or role parameter

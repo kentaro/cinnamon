@@ -42,7 +42,7 @@ Cinnamon - A minimalistic deploy tool
 
     # Tasks
     task update => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         my $deploy_to = get('deploy_to');
         my $branch = 'origin/' . get('branch');
 
@@ -55,14 +55,14 @@ Cinnamon - A minimalistic deploy tool
         } $host;
     };
     task restart => sub {
-      my ($host, @args) = @_;
+      my ($host) = @_;
       # ...
     };
 
     # Nest tasks
     task server => {
         setup => sub {
-            my ($host, @args) = @_;
+            my ($host) = @_;
             # ...
         },
     };
@@ -118,40 +118,32 @@ simple as possible, and I don't want to add too many commands:
 
 ### task ( _$taskname: Str_ => (_\\%tasks: Hash\[String =_ CODE\]> | _$sub: CODE_) )
 
-        task update => sub {
-            my ($host, @args) = @_;
-            my $hoge = get 'hoge'; # parameter set in global or role parameter
-            # ...
-        };
+    task update => sub {
+        my ($host) = @_;
+        my $hoge = get 'hoge'; # parameter set in global or role parameter
+        # ...
+    };
 
-        # you can nest tasks
-        task server => {
-            start => sub {
-              my ($host, @args) = @_;
-              # ...
-            },
-            stop => sub {
-              my ($host, @args) = @_;
-              # ...
-            },
-        };
+    # you can nest tasks
+    task server => {
+        start => sub {
+          my ($host) = @_;
+          # ...
+        },
+        stop => sub {
+          my ($host) = @_;
+          # ...
+        },
+    };
 
-    Defines some named tasks by CODEs.
+Defines some named tasks by CODEs.
 
-    The arguments which are passed into the CODEs are:
+The arguments which are passed into the CODEs are:
 
-    - _$host_
+- _$host_
 
-        The host name where the task is executed. Which is one of the hosts
-        you set by `role` command.
-
-    - _@args_
-
-        Command line argument which is passed by user.
-
-            $ cinammon production update foo bar baz
-
-        In case above, `@args` contains `('foo', 'bar', 'baz')`.
+    The host name where the task is executed. Which is one of the hosts
+    you set by `role` command.
 
 ## Utilities
 
