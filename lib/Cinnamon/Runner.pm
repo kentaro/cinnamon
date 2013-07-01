@@ -9,7 +9,7 @@ use Coro;
 use Coro::Select;
 
 sub start {
-    my ($class, $hosts, $task, @args) = @_;
+    my ($class, $hosts, $task) = @_;
     my $all_results = {};
     $hosts = [ @$hosts ];
 
@@ -22,7 +22,7 @@ sub start {
 
         for my $host (@target_hosts) {
             my $coro = async {
-                my $result = $class->execute($host, $task, @args);
+                my $result = $class->execute($host, $task);
                 $all_results->{$host} = $result;
             };
 
@@ -36,12 +36,12 @@ sub start {
 }
 
 sub execute {
-    my ($class, $host, $task, @args) = @_;
+    my ($class, $host, $task) = @_;
 
     my $result = { host => $host, error => 0 };
 
     local $@;
-    eval { $task->($host, @args) };
+    eval { $task->($host) };
     if ($@) {
         chomp $@;
         log error => sprintf '[%s] %s', $host, $@;
