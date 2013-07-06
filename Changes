@@ -2,6 +2,10 @@ Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
 
+0.23 2013-07-06T06:19:48Z
+    - fix bug to run task on same host, when concurrency running
+    - fix bug to misunderstand the result of running command on local
+
 0.22 2013-05-25T05:41:30Z
     - fix to handle \r\n in output correctly.  Thanks to yteraoka.
 
