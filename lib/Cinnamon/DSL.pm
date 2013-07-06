@@ -9,6 +9,8 @@ use Cinnamon::Remote;
 use Cinnamon::Logger;
 use Term::ReadKey;
 
+use Coro;
+
 our @EXPORT = qw(
     set
     get
@@ -50,9 +52,9 @@ sub remote (&$) {
         user => Cinnamon::Config::user,
     );
 
-    no warnings 'redefine';
-    local *_host    = sub { $remote->host };
-    local *_execute = sub { $remote->execute(@_) };
+    my $stash = _stash();
+    local $stash->{current_host}   = $remote->host;
+    local $stash->{current_remote} = $remote;
 
     $code->($host);
 }
@@ -65,7 +67,7 @@ sub run (@) {
     my ($stdout, $stderr);
     my $result;
 
-    log info => sprintf "[%s :: executing] %s", _host(), join(' ', @cmd);
+    log info => sprintf "[%s :: executing] %s", _current_host(), join(' ', @cmd);
 
     if ($opt && $opt->{sudo}) {
         my $password = Cinnamon::Config::get('password');
@@ -73,7 +75,12 @@ sub run (@) {
         $opt->{password} = $password;
     }
 
-    $result = _execute($opt, @cmd);
+    if (my $remote = _current_remote()) {
+        $result = $remote->execute($opt, @cmd);
+    }
+    else {
+        $result = Cinnamon::Local->execute($opt, @cmd);
+    }
 
     if ($result->{has_error}) {
         die sprintf "error status: %d", $result->{error};
@@ -99,7 +106,16 @@ sub _sudo_password {
     return $password;
 }
 
-sub _host    { 'localhost' }
-sub _execute { Cinnamon::Local->execute(@_) }
+sub _current_host {
+    _stash()->{current_host} || 'localhost';
+}
+sub _current_remote {
+    _stash()->{current_remote};
+}
+
+# thread safe stash
+sub _stash {
+    $Coro::current->{Cinnamon} ||= {};
+}
 
 !!1;

@@ -23,7 +23,7 @@ sub execute {
     +{
         stdout    => $stdout,
         stderr    => $stderr,
-        has_error => !$result,
+        has_error => $? > 0,
         error     => $?,
     };
 }
