@@ -177,19 +177,25 @@ sub run_cmd {
 
     $opts->{tty} = !! $self->get_param('tty');
 
-    my $result;
-    if (my $remote = $self->stash->{current_remote}) {
-        $result = $remote->execute($opts, @$commands);
-    }
-    else {
-        $result = Cinnamon::Local->execute($opts, @$commands);
-    }
+    my $executor = $self->build_command_executor;
+    my $result = $executor->execute($commands, $opts);
 
     if ($result->{has_error}) {
         die sprintf "error status: %d", $result->{error};
     }
 
     return ($result->{stdout}, $result->{stderr});
+}
+
+sub build_command_executor {
+    my ($self) = @_;
+
+    if (my $remote = $self->stash->{current_remote}) {
+        return $remote;
+    }
+    else {
+        return Cinnamon::Local->new;
+    }
 }
 
 sub dump_info {
