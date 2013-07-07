@@ -12,6 +12,7 @@ use Cinnamon::Config qw();
 use Cinnamon::Runner;
 use Cinnamon::Logger;
 use Cinnamon::Role;
+use Cinnamon::Task;
 
 our $CTX;
 
@@ -20,31 +21,36 @@ has roles => (
     default => sub { Hash::MultiValue->new() }
 );
 
+has tasks => (
+    is => 'ro',
+    default => sub { Hash::MultiValue->new() }
+);
+
 sub run {
-    my ($self, $role, $task, %opts)  = @_;
-    Cinnamon::Config::load $role, $task, %opts;
+    my ($self, $role_name, $task_name, %opts)  = @_;
+    Cinnamon::Config::load $role_name, $task_name, %opts;
 
     if ($opts{info}) {
         $self->dump_info;
         return;
     }
 
-    my $hosts    = $self->get_role_hosts($role);
-    my $task_def = Cinnamon::Config::get_task;
-    my $runner   = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
+    my $hosts  = $self->get_role_hosts($role_name);
+    my $task   = $self->get_task($task_name);
+    my $runner = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
 
     unless (defined $hosts) {
-        log 'error', "undefined role : '$role'";
+        log 'error', "undefined role : '$role_name'";
         return;
     }
-    unless (defined $task_def) {
-        log 'error', "undefined task : '$task'";
+    unless (defined $task) {
+        log 'error', "undefined task : '$task_name'";
         return;
     }
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, $task_def);
+    my $result = $runner->start($hosts, $task->code);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {
@@ -100,18 +106,46 @@ sub get_role_hosts {
     return $hosts;
 }
 
-sub dump_info {
-    my ($self) = @_;
-    my $info = Cinnamon::Config::info;
-
-    my $roles = $self->roles;
-    my $role_info = {};
-    for my $name ($roles->keys) {
-        $role_info->{$name} = $roles->get($name)->info;
+sub add_task {
+    my ($self, $name, $code) = @_;
+    unless (ref $code eq 'HASH') {
+        my $task = Cinnamon::Task->new(
+            name => $name,
+            code => $code,
+        );
+        return $self->tasks->set($name => $task);
     }
 
-    $info->{roles} = $role_info;
-    log 'info', YAML::Dump($info);
+    # a nest task is named as joined by colon
+    for my $child (keys %$code) {
+        my $child_name = join ":", $name, $child;
+        $self->add_task($child_name => $code->{$child});
+    }
+}
+
+sub get_task {
+    my ($self, $name) = @_;
+    return $self->tasks->get($name);
+}
+
+sub dump_info {
+    my ($self) = @_;
+    my $info = {};
+
+    my $roles = $self->roles;
+    my $role_info = +{
+        map { $_->name => $_->info } $roles->values,
+    };
+
+    my $tasks = $self->tasks;
+    my $task_info = +{
+        map { $_->name => $_->code } $tasks->values,
+    };
+
+    log 'info', YAML::Dump({
+        roles => $role_info,
+        tasks => $task_info,
+    });
 }
 
 !!1;

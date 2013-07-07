@@ -35,4 +35,30 @@ sub role : Tests {
     };
 }
 
+sub task : Tests {
+    subtest 'simple task definition' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->add_task('task1' => sub { });
+        $ctx->add_task('task2' => sub { });
+
+        is $ctx->get_task('task1')->name, 'task1';
+        is $ctx->get_task('task2')->name, 'task2';
+    };
+
+    subtest 'nest task definition' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->add_task('task1' => {
+            nest1 => sub { },
+            nest2 => {
+                subnest1 => sub { },
+            },
+        });
+        $ctx->add_task('task2' => sub {});
+
+        is $ctx->get_task('task1:nest1')->name, 'task1:nest1';
+        is $ctx->get_task('task1:nest2:subnest1')->name, 'task1:nest2:subnest1';
+        is $ctx->get_task('task2')->name, 'task2';
+    };
+}
+
 __PACKAGE__->runtests;
