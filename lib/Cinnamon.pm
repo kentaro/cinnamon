@@ -4,13 +4,11 @@ use warnings;
 use 5.010_001;
 
 use parent qw(Exporter);
-use Cinnamon::Context;
 
 our $VERSION = '0.23';
 
 our @EXPORT = qw(CTX);
 sub CTX { $Cinnamon::Context::CTX };
-
 
 !!1;
 

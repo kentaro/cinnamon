@@ -26,6 +26,11 @@ has tasks => (
     default => sub { Hash::MultiValue->new() }
 );
 
+has params => (
+    is => 'ro',
+    default => sub { Hash::MultiValue->new() }
+);
+
 sub run {
     my ($self, $role_name, $task_name, %opts)  = @_;
     Cinnamon::Config::load $role_name, $task_name, %opts;
@@ -37,7 +42,7 @@ sub run {
 
     my $hosts  = $self->get_role_hosts($role_name);
     my $task   = $self->get_task($task_name);
-    my $runner = Cinnamon::Config::get('runner_class') || 'Cinnamon::Runner';
+    my $runner = $self->get_param('runner_class') || 'Cinnamon::Runner';
 
     unless (defined $hosts) {
         log 'error', "undefined role : '$role_name'";
@@ -100,7 +105,7 @@ sub get_role_hosts {
     # TODO: move from here
     my $params = $role->params;
     for my $key (keys %$params) {
-        Cinnamon::Config::set $key => $params->{$key};
+        $self->set_param($key => $params->{$key});
     }
 
     return $hosts;
@@ -126,6 +131,20 @@ sub add_task {
 sub get_task {
     my ($self, $name) = @_;
     return $self->tasks->get($name);
+}
+
+sub set_param {
+    my ($self, $key, $value) = @_;
+    $self->params->set($key => $value);
+}
+
+sub get_param {
+    my ($self, $key, @args) = @_;
+
+    my $value = $self->params->get($key);
+    $value = $value->(@args) if ref $value eq 'CODE';
+
+    return $value;
 }
 
 sub dump_info {

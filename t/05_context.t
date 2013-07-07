@@ -29,9 +29,7 @@ sub role : Tests {
         $ctx->add_role('name1', 'host1', { hoge => 'fuga' });
 
         is_deeply $ctx->get_role_hosts('name1'), ['host1'];
-        is Cinnamon::Config::get('hoge'), 'fuga';
-
-        Cinnamon::Config::reset();
+        is $ctx->get_param('hoge'), 'fuga';
     };
 }
 
@@ -58,6 +56,30 @@ sub task : Tests {
         is $ctx->get_task('task1:nest1')->name, 'task1:nest1';
         is $ctx->get_task('task1:nest2:subnest1')->name, 'task1:nest2:subnest1';
         is $ctx->get_task('task2')->name, 'task2';
+    };
+}
+
+sub param : Tests {
+    subtest 'simple param' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->set_param('key1' => 'value1');
+        $ctx->set_param('key2' => 'value2');
+
+        is $ctx->get_param('key1'), 'value1';
+        is $ctx->get_param('key2'), 'value2';
+    };
+
+    subtest 'code param' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->set_param('key1' => sub { 'value1' });
+        $ctx->set_param('key2' => sub {
+            my ($count) = @_;
+            return "value$count";
+        });
+
+        is $ctx->get_param('key1'), 'value1';
+        is $ctx->get_param('key2', 2), 'value2';
+        is $ctx->get_param('key2', 3), 'value3';
     };
 }
 

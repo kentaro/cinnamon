@@ -3,7 +3,7 @@ use strict;
 use warnings;
 use parent qw(Exporter);
 
-use Cinnamon;
+use Cinnamon qw(CTX);
 use Cinnamon::Config;
 use Cinnamon::Local;
 use Cinnamon::Remote;
@@ -25,12 +25,12 @@ our @EXPORT = qw(
 
 sub set ($$) {
     my ($name, $value) = @_;
-    Cinnamon::Config::set $name => $value;
+    CTX->set_param($name => $value);
 }
 
 sub get ($@) {
     my ($name, @args) = @_;
-    Cinnamon::Config::get $name, @args;
+    CTX->get_param($name, @args);
 }
 
 sub role ($$;$) {
@@ -40,7 +40,6 @@ sub role ($$;$) {
 
 sub task ($$) {
     my ($task, $task_def) = @_;
-
     CTX->add_task($task => $task_def);
 }
 
@@ -49,7 +48,7 @@ sub remote (&$) {
 
     my $remote = Cinnamon::Remote->new(
         host => $host,
-        user => Cinnamon::Config::user,
+        user => CTX->get_param('user'),
     );
 
     my $stash = _stash();
@@ -70,7 +69,7 @@ sub run (@) {
     log info => sprintf "[%s :: executing] %s", _current_host(), join(' ', @cmd);
 
     if ($opt && $opt->{sudo}) {
-        my $password = Cinnamon::Config::get('password');
+        my $password = CTX->get_param('password');
         $password = _sudo_password() unless (defined $password);
         $opt->{password} = $password;
     }
@@ -91,7 +90,7 @@ sub run (@) {
 
 sub sudo (@) {
     my (@cmd) = @_;
-    my $tty = Cinnamon::Config::get('tty');
+    my $tty = CTX->get_param('tty');
     run {sudo => 1, tty => !! $tty}, @cmd;
 }
 
@@ -100,7 +99,7 @@ sub _sudo_password {
     print "Enter sudo password: ";
     ReadMode "noecho";
     chomp($password = ReadLine 0);
-    Cinnamon::Config::set('password' => $password);
+    CTX->set_param(password => $password);
     ReadMode 0;
     print "\n";
     return $password;
