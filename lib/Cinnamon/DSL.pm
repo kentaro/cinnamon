@@ -4,7 +4,6 @@ use warnings;
 use parent qw(Exporter);
 
 use Cinnamon qw(CTX);
-use Cinnamon::Config;
 use Cinnamon::Local;
 use Cinnamon::Remote;
 use Cinnamon::Logger;

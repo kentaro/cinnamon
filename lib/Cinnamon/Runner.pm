@@ -4,7 +4,6 @@ use warnings;
 
 use Cinnamon qw(CTX);
 use Cinnamon::Logger;
-use Cinnamon::Config;
 
 use Coro;
 use Coro::Select;

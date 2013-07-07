@@ -8,11 +8,12 @@ use YAML ();
 use Class::Load ();
 use Hash::MultiValue;
 
-use Cinnamon::Config qw();
+use Cinnamon;
 use Cinnamon::Runner;
 use Cinnamon::Logger;
 use Cinnamon::Role;
 use Cinnamon::Task;
+use Cinnamon::Config::Loader;
 
 our $CTX;
 
@@ -33,11 +34,21 @@ has params => (
 
 sub run {
     my ($self, $role_name, $task_name, %opts)  = @_;
-    Cinnamon::Config::load $role_name, $task_name, %opts;
+
+    Cinnamon::Config::Loader->load(config => $opts{config});
 
     if ($opts{info}) {
         $self->dump_info;
         return;
+    }
+
+    # set role name and task name
+    CTX->set_param(role => $role_name);
+    CTX->set_param(task => $task_name);
+
+    # override setting
+    for my $key (keys %{ $opts{override_settings} }) {
+        CTX->set_param($key => $opts{override_settings}->{$key});
     }
 
     my $hosts  = $self->get_role_hosts($role_name);

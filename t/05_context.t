@@ -7,7 +7,6 @@ use parent qw(Test::Class);
 use Test::More;
 
 use Cinnamon::Context;
-use Cinnamon::Config ();
 
 sub role : Tests {
     subtest 'role without params' => sub {
