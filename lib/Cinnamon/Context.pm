@@ -139,7 +139,7 @@ sub dump_info {
 
     my $tasks = $self->tasks;
     my $task_info = +{
-        map { $_->name => $_->code } $tasks->values,
+        map { %{ $_->info } } $tasks->values,
     };
 
     log 'info', YAML::Dump({
