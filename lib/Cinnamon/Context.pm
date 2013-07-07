@@ -7,6 +7,7 @@ use Moo;
 use YAML ();
 use Class::Load ();
 use Hash::MultiValue;
+use Term::ReadKey;
 
 use Cinnamon;
 use Cinnamon::Runner;
@@ -163,6 +164,34 @@ sub stash {
     my $stash = $Coro::current->{Cinnamon} ||= {};
 }
 
+sub run_cmd {
+    my ($self, $commands, $opts) = @_;
+    $opts ||= {};
+
+    my $current_host = $self->stash->{current_host} || 'localhost';
+    log info => sprintf "[%s :: executing] %s", $current_host, join(' ', @$commands);
+
+    if ($opts->{sudo}) {
+        $opts->{password} = $self->_get_sudo_password();
+    }
+
+    $opts->{tty} = !! $self->get_param('tty');
+
+    my $result;
+    if (my $remote = $self->stash->{current_remote}) {
+        $result = $remote->execute($opts, @$commands);
+    }
+    else {
+        $result = Cinnamon::Local->execute($opts, @$commands);
+    }
+
+    if ($result->{has_error}) {
+        die sprintf "error status: %d", $result->{error};
+    }
+
+    return ($result->{stdout}, $result->{stderr});
+}
+
 sub dump_info {
     my ($self) = @_;
     my $info = {};
@@ -181,6 +210,21 @@ sub dump_info {
         roles => $role_info,
         tasks => $task_info,
     });
+}
+
+sub _get_sudo_password {
+    my ($self) = @_;
+    my $password = $self->get_param('password');
+    return $password if $password;
+
+    print "Enter sudo password: ";
+    ReadMode "noecho";
+    chomp($password = ReadLine 0);
+    ReadMode 0;
+    print "\n";
+
+    $self->set_param(password => $password);
+    return $password;
 }
 
 !!1;
