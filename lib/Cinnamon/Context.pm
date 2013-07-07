@@ -158,6 +158,11 @@ sub get_param {
     return $value;
 }
 
+# Thread-specific stash
+sub stash {
+    my $stash = $Coro::current->{Cinnamon} ||= {};
+}
+
 sub dump_info {
     my ($self) = @_;
     my $info = {};

@@ -50,7 +50,7 @@ sub remote (&$) {
         user => CTX->get_param('user'),
     );
 
-    my $stash = _stash();
+    my $stash = CTX->stash;
     local $stash->{current_host}   = $remote->host;
     local $stash->{current_remote} = $remote;
 
@@ -65,7 +65,8 @@ sub run (@) {
     my ($stdout, $stderr);
     my $result;
 
-    log info => sprintf "[%s :: executing] %s", _current_host(), join(' ', @cmd);
+    my $current_host = CTX->stash->{current_host} || 'localhost';
+    log info => sprintf "[%s :: executing] %s", $current_host, join(' ', @cmd);
 
     if ($opt && $opt->{sudo}) {
         my $password = CTX->get_param('password');
@@ -73,7 +74,7 @@ sub run (@) {
         $opt->{password} = $password;
     }
 
-    if (my $remote = _current_remote()) {
+    if (my $remote = CTX->stash->{current_remote}) {
         $result = $remote->execute($opt, @cmd);
     }
     else {
@@ -102,18 +103,6 @@ sub _sudo_password {
     ReadMode 0;
     print "\n";
     return $password;
-}
-
-sub _current_host {
-    _stash()->{current_host} || 'localhost';
-}
-sub _current_remote {
-    _stash()->{current_remote};
-}
-
-# thread safe stash
-sub _stash {
-    $Coro::current->{Cinnamon} ||= {};
 }
 
 !!1;
