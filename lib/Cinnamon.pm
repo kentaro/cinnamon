@@ -3,20 +3,14 @@ use strict;
 use warnings;
 use 5.010_001;
 
-our $VERSION = '0.23';
-
+use parent qw(Exporter);
 use Cinnamon::Context;
 
-sub new {
-    my $class = shift;
-    bless { }, $class;
-}
+our $VERSION = '0.23';
 
-sub run {
-    my ($self, $role, $task, %opts)  = @_;
+our @EXPORT = qw(CTX);
+sub CTX { $Cinnamon::Context::CTX };
 
-    return Cinnamon::Context->new->run($role, $task, %opts);
-}
 
 !!1;
 

@@ -9,6 +9,8 @@ use Cinnamon::Config;
 use Cinnamon::Runner;
 use Cinnamon::Logger;
 
+our $CTX;
+
 sub new {
     my $class = shift;
     bless { }, $class;
