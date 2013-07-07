@@ -18,4 +18,12 @@ sub get_hosts {
     return ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
 }
 
+sub info {
+    my ($self) = @_;
+    return +{
+        hosts  => $self->get_hosts,
+        params => $self->params->as_hashref,
+    };
+}
+
 1;

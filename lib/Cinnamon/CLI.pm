@@ -53,6 +53,7 @@ sub run {
     @tasks = (undef) if (@tasks == 0);
     my $error_occured = 0;
     my $context = Cinnamon::Context->new;
+    local $Cinnamon::Context::CTX = $context;
     for my $task (@tasks) {
         my ($success, $error) = $context->run(
             $role,

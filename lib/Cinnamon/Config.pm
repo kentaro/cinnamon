@@ -6,12 +6,10 @@ use Cinnamon::Config::Loader;
 use Cinnamon::Logger;
 
 my %CONFIG;
-my %ROLES;
 my %TASKS;
 
 sub reset () {
     %CONFIG = ();
-    %ROLES  = ();
     %TASKS  = ();
 }
 
@@ -28,30 +26,6 @@ sub get ($@) {
 
     $value = $value->(@args) if ref $value eq 'CODE';
     $value;
-}
-
-sub set_role ($$$) {
-    my ($role, $hosts, $params) = @_;
-
-    $ROLES{$role} = [$hosts, $params];
-}
-
-sub get_role (@) {
-    my $role  = ($_[0] || get('role'));
-
-    my $role_def = $ROLES{$role} or return undef;
-
-    my ($hosts, $params) = @$role_def;
-
-    for my $key (keys %$params) {
-        set $key => $params->{$key};
-    }
-
-    $hosts = $hosts->() if ref $hosts eq 'CODE';
-    $hosts = [] unless defined $hosts;
-    $hosts = ref $hosts eq 'ARRAY' ? $hosts : [$hosts];
-
-    return $hosts;
 }
 
 sub set_task ($$) {
@@ -96,14 +70,8 @@ sub load (@) {
 
 sub info {
     my $self  = shift;
-    my %roles = map {
-        my ($hosts, $params) = @{$ROLES{$_}};
-        $hosts = $hosts->() if ref $hosts eq 'CODE';
-        $_ => { hosts => $hosts, params => $params };
-    } keys %ROLES;
 
     +{
-        roles => \%roles,
         tasks => \%TASKS,
     }
 }

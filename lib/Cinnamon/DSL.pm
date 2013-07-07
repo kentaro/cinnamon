@@ -3,6 +3,7 @@ use strict;
 use warnings;
 use parent qw(Exporter);
 
+use Cinnamon;
 use Cinnamon::Config;
 use Cinnamon::Local;
 use Cinnamon::Remote;
@@ -34,8 +35,7 @@ sub get ($@) {
 
 sub role ($$;$) {
     my ($name, $hosts, $params) = @_;
-    $params ||= {};
-    Cinnamon::Config::set_role $name => $hosts, $params;
+    CTX->add_role($name, $hosts, $params);
 }
 
 sub task ($$) {

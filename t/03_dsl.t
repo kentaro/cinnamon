@@ -8,6 +8,7 @@ use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
 use Cinnamon::DSL ();
+use Cinnamon::Context;
 
 {
     package TESTIN;
