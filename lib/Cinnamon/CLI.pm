@@ -3,18 +3,13 @@ use strict;
 use warnings;
 
 use Getopt::Long;
-use Cinnamon;
+use Cinnamon::Context;
 
 use constant { SUCCESS => 0, ERROR => 1 };
 
 sub new {
     my $class = shift;
     bless { }, $class;
-}
-
-sub cinnamon {
-    my $self = shift;
-    $self->{cinnamon} ||= Cinnamon->new;
 }
 
 sub run {
@@ -57,8 +52,10 @@ sub run {
 
     @tasks = (undef) if (@tasks == 0);
     my $error_occured = 0;
+    my $context = Cinnamon::Context->new;
+    local $Cinnamon::Context::CTX = $context;
     for my $task (@tasks) {
-        my ($success, $error) = $self->cinnamon->run(
+        my ($success, $error) = $context->run(
             $role,
             $task,
             config            => $self->{config},

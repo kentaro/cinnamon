@@ -1,14 +1,16 @@
 package Cinnamon::Local;
 use strict;
 use warnings;
-use Carp ();
+
+use Moo;
+
 use IPC::Run ();
 
 use Cinnamon::Logger;
 
 sub execute {
-    my ($class, $opt, @cmd) = @_;
-    my $result = IPC::Run::run \@cmd, \my $stdin, \my $stdout, \my $stderr;
+    my ($self, $commands, $opts) = @_;
+    my $result = IPC::Run::run $commands, \my $stdin, \my $stdout, \my $stderr;
     chomp for ($stdout, $stderr);
 
     for my $line (split "\n", $stdout) {
