@@ -32,7 +32,7 @@ sub execute {
 
     my ($stdin, $stdout, $stderr, $pid) = $conn->open3({
         tty => $opt->{tty},
-    }, join ' ', @cmd);
+    }, join ' ', @cmd) or die "open3 failed: " . $conn->error;
 
     if ($opt->{password}) {
         print $stdin "$opt->{password}\n";
