@@ -1,6 +1,7 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+    - refactor management of task, role and params
 
 0.23 2013-07-06T06:19:48Z
     - fix bug to run task on same host, when concurrency running
