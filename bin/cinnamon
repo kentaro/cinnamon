@@ -1,7 +1,6 @@
 #!/usr/bin/env perl
 use strict;
 use warnings;
-use Cinnamon;
 use Cinnamon::CLI;
 
 my $exit_status = Cinnamon::CLI->new->run(@ARGV);

@@ -7,7 +7,9 @@ use lib file(__FILE__)->dir->file('lib')->stringify;
 use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
+use Cinnamon qw(CTX);
 use Cinnamon::DSL ();
+use Cinnamon::Context;
 
 {
     package TESTIN;
@@ -19,21 +21,17 @@ use Cinnamon::DSL ();
     sub READLINE { shift @{ $_[0] } }
 }
 
-sub setup : Test(setup) {
-    Cinnamon::Config::reset;
-}
-
 sub sudo : Tests {
     subtest _sudo_password => sub {
-        Cinnamon::Config::reset;
+        my $ctx = Cinnamon::Context->new;
+        local $Cinnamon::Context::CTX = $ctx;
         my $pass = "mypassword";
         tie local *STDIN, 'TESTIN', $pass;
         is Cinnamon::DSL::_sudo_password(), $pass;
-        is Cinnamon::Config::get('password'), $pass;
+        is $ctx->get_param('password'), $pass;
     };
 
     subtest _print_execute_command_before_enter_sudo_password => sub {
-        Cinnamon::Config::reset;
         my $app = Test::Cinnamon::CLI::cli();
         $app->dir->touch("config/deploy.pl", <<'CONFIG');
 use Cinnamon::DSL;

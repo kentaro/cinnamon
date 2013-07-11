@@ -1,15 +1,13 @@
 package Cinnamon::Remote;
 use strict;
 use warnings;
+
+use Moo;
+
 use Net::OpenSSH;
 
 use Cinnamon::HandleManager;
 use Cinnamon::Logger;
-
-sub new {
-    my ($class, %args) = @_;
-    bless \%args, $class;
-}
 
 sub connection {
     my $self = shift;
@@ -21,21 +19,20 @@ sub connection {
 sub host { $_[0]->{host} }
 
 sub execute {
-    my ($self, $opt, @cmd) = @_;
+    my ($self, $commands, $opts) = @_;
     my $host = $self->host || '';
     my $conn = $self->connection;
-    my $exec_opt = {};
 
-    if (defined $opt && $opt->{sudo}) {
-        @cmd = ('sudo', '-Sk', @cmd);
+    if ($opts->{sudo}) {
+        @$commands = ('sudo', '-Sk', @$commands);
     }
 
     my ($stdin, $stdout, $stderr, $pid) = $conn->open3({
-        tty => $opt->{tty},
-    }, join ' ', @cmd);
+        tty => $opts->{tty},
+    }, join ' ', @$commands);
 
-    if ($opt->{password}) {
-        print $stdin "$opt->{password}\n";
+    if ($opts->{password}) {
+        print $stdin "$opts->{password}\n";
     }
 
     my $hm = Cinnamon::HandleManager->new(host => $self->{host});
@@ -56,11 +53,6 @@ sub execute {
         has_error => $exitcode > 0,
         error     => $exitcode,
     };
-}
-
-sub DESTROY {
-    my $self = shift;
-       $self->{connection} = undef;
 }
 
 !!1;
