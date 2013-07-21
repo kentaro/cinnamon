@@ -2,8 +2,8 @@ package Cinnamon::Runner;
 use strict;
 use warnings;
 
+use Cinnamon qw(CTX);
 use Cinnamon::Logger;
-use Cinnamon::Config;
 
 use Coro;
 use Coro::Select;
@@ -13,8 +13,8 @@ sub start {
     my $all_results = {};
     $hosts = [ @$hosts ];
 
-    my $task_name           = Cinnamon::Config::get('task');
-    my $concurrency_setting = Cinnamon::Config::get('concurrency') || {};
+    my $task_name           = CTX->get_param('task');
+    my $concurrency_setting = CTX->get_param('concurrency') || {};
     my $concurrency         = $concurrency_setting->{$task_name} || scalar @$hosts;
 
     while (my @target_hosts = splice @$hosts, 0, $concurrency) {

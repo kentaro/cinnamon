@@ -9,6 +9,8 @@ requires 'POSIX';
 requires 'Term::ANSIColor';
 requires 'Term::ReadKey';
 requires 'YAML';
+requires 'Moo';
+requires 'Hash::MultiValue';
 requires 'parent';
 requires 'perl', '5.014002';
 

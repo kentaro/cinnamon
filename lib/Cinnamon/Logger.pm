@@ -5,8 +5,6 @@ use parent qw(Exporter);
 
 use Term::ANSIColor ();
 
-use Cinnamon::Config;
-
 our @EXPORT = qw(
     log
 );

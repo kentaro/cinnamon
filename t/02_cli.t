@@ -7,12 +7,9 @@ use lib file(__FILE__)->dir->file('lib')->stringify;
 use base qw(Test::Class);
 
 use Test::Cinnamon::CLI;
+use Cinnamon::Context;
 
 use constant { CLI_SUCCESS => 0, CLI_ERROR => 1 };
-
-sub setup : Test(setup) {
-    Cinnamon::Config::reset;
-}
 
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
