@@ -5,3 +5,21 @@ use Cinnamon::CLI;
 
 my $exit_status = Cinnamon::CLI->new->run(@ARGV);
 exit $exit_status;
+
+__END__
+
+=encoding utf8
+
+=head1 NAME
+
+cinnamon - Command Line Interface for Deploy with Cinnamon
+
+=head1 USAGE
+
+    $ cinnamon [options...] <role> <task ...>
+
+    -h --help               Display help
+    -i --info Display a definition of Role and Task
+    -c --config Config path
+    -s --set Override parameters which we can get from "get" method provided Cinnamon::DSL
+    -I --ignore-errors Cinnamon execute all task, if error occur during execution

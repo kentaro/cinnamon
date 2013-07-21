@@ -78,7 +78,7 @@ sub run {
 sub usage {
     my $self = shift;
     my $msg = <<"HELP";
-Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>
+Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>
 HELP
     $self->print($msg);
 }
