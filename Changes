@@ -1,6 +1,8 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+
+0.24 2013-07-21T06:50:50Z
     - refactor management of task, role and params
     - handle error on open3
 
