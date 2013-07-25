@@ -14,7 +14,7 @@ use constant { CLI_SUCCESS => 0, CLI_ERROR => 1 };
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     is $app->run('--help'), CLI_SUCCESS;
-    is $app->system_error, "Usage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>\n";
+    is $app->system_error, "Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>\n";
 }
 
 sub _info : Tests {
@@ -41,7 +41,7 @@ OUTPUT
 sub _no_config : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     is $app->run('role', 'task'), CLI_ERROR;
-    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--help] [--info] <role> <task ...>\n";
+    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>\n";
 }
 
 sub _valid : Tests {
