@@ -36,7 +36,7 @@ role production  => sub {
 
 # Tasks
 task update => sub {
-    my ($host, @args) = @_;
+    my ($host) = @_;
 
     # Executed on localhost
     run 'some', 'command';
@@ -51,7 +51,7 @@ task update => sub {
 # nest tasks
 task server => {
     setup => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
 
         # Executed on localhost
         run 'some', 'command';
@@ -67,7 +67,7 @@ task server => {
     },
 
     restart => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         # ...
     },
 };

@@ -16,7 +16,7 @@ role development => ['myapp-development.ap-northeast-1'], {
 
 task deploy  => {
     setup => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         my $repository = get('repository');
         my $deploy_to  = get('deploy_to');
         my $branch   = 'origin/' . get('branch');
@@ -25,7 +25,7 @@ task deploy  => {
         } $host;
     },
     update => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         my $deploy_to = get('deploy_to');
         my $branch   = 'origin/' . get('branch');
         remote {
@@ -36,25 +36,25 @@ task deploy  => {
 
 task server => {
     start => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         remote {
             sudo "supervisorctl start myapp";
         } $host;
     },
     stop => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         remote {
             sudo "supervisorctl stop myapp";
         } $host;
     },
     restart => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         remote {
             run "kill -HUP `cat /tmp/myapp.pid`";
         } $host;
     },
     status => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         remote {
             sudo "supervisorctl status";
         } $host;
@@ -63,7 +63,7 @@ task server => {
 
 task carton => {
     install => sub {
-        my ($host, @args) = @_;
+        my ($host) = @_;
         my $deploy_to = get('deploy_to');
         remote {
             run ". ~/perl5/perlbrew/etc/bashrc && cd $deploy_to && carton install";
