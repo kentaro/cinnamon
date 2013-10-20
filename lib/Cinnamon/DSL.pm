@@ -12,6 +12,7 @@ our @EXPORT = qw(
     get
     role
     task
+    call
 
     remote
     run
