@@ -164,6 +164,13 @@ sub stash {
     my $stash = $Coro::current->{Cinnamon} ||= {};
 }
 
+sub call_task {
+    my ($self, $task_name, $host) = @_;
+    my $task = $self->get_task($task_name) or die "undefined task : '$task_name'";
+
+    $task->execute($host);
+}
+
 sub run_cmd {
     my ($self, $commands, $opts) = @_;
     $opts ||= {};
