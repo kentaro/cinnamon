@@ -67,6 +67,13 @@ Cinnamon - A minimalistic deploy tool
         },
     };
 
+    # You can call other tasks
+    task deploy => sub {
+      my ($host) = @_;
+      call "update", $host;
+      call "restart", $host;
+    };
+
 # WARNINGS
 
 This software is under the heavy development and considered ALPHA quality.  Things might be broken, not all features have been implemented, and APIs will be likely to change.
@@ -211,6 +218,16 @@ whereas done on localhost without it.
 
 Remote login username is retrieved by `get 'user'` or ``whoami``
 command. Set appropriate username in advance if needed.
+
+### call ( _$task\_name: String_, _$host: String_ )
+
+        task deploy => sub {
+          my ($host) = @_;
+          call "update", $host;
+          call "web:restart", $host;
+        };
+
+Call other tasks in a task code.
 
 ## Configuration Variables
 

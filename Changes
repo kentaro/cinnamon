@@ -2,6 +2,9 @@ Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
 
+0.26 2013-10-20T07:20:22Z
+    - add call DSL
+
 0.25 2013-07-25T10:21:13Z
     - remove @args in task, because we can specify parameter by -s option
 
