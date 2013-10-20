@@ -12,6 +12,7 @@ our @EXPORT = qw(
     get
     role
     task
+    call
 
     remote
     run
@@ -51,6 +52,11 @@ sub remote (&$) {
     local $stash->{current_remote} = $remote;
 
     $code->($host);
+}
+
+sub call ($$) {
+    my ($task_name, $host) = @_;
+    CTX->call_task($task_name, $host);
 }
 
 sub run (@) {

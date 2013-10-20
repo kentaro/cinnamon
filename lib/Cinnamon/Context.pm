@@ -67,7 +67,7 @@ sub run {
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, $task->code);
+    my $result = $runner->start($hosts, $task);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {
@@ -162,6 +162,13 @@ sub get_param {
 # Thread-specific stash
 sub stash {
     my $stash = $Coro::current->{Cinnamon} ||= {};
+}
+
+sub call_task {
+    my ($self, $task_name, $host) = @_;
+    my $task = $self->get_task($task_name) or die "undefined task : '$task_name'";
+
+    $task->execute($host);
 }
 
 sub run_cmd {

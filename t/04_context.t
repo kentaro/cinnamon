@@ -5,6 +5,8 @@ use lib file(__FILE__)->dir->file('lib')->stringify;
 
 use parent qw(Test::Class);
 use Test::More;
+use Test::Fatal;
+use Test::Mock::Guard qw(mock_guard);
 
 use Cinnamon::Context;
 
@@ -79,6 +81,38 @@ sub param : Tests {
         is $ctx->get_param('key1'), 'value1';
         is $ctx->get_param('key2', 2), 'value2';
         is $ctx->get_param('key2', 3), 'value3';
+    };
+}
+
+sub call_task : Tests {
+    subtest 'undefined task' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->add_task('task1' => sub { });
+        my $E = exception { $ctx->call_task('task2', 'host1') };
+        like $E, qr{undefined task : 'task2'};
+    };
+
+    subtest 'call task' => sub {
+        my $ctx = Cinnamon::Context->new;
+        $ctx->add_task('task1' => sub { });
+        $ctx->add_task('task2' => {
+            nest1 => sub { },
+        });
+
+        my $last_args;
+        my $g = mock_guard "Cinnamon::Task", {
+            execute => sub { $last_args = \@_ },
+        };
+
+        note "call a simple task";
+        $ctx->call_task('task1', 'host1');
+        is $last_args->[0]->name, 'task1';
+        is $last_args->[1], 'host1';
+
+        note "call a nested task";
+        $ctx->call_task('task2:nest1', 'host2');
+        is $last_args->[0]->name, 'task2:nest1';
+        is $last_args->[1], 'host2';
     };
 }
 

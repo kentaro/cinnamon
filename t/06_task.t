@@ -8,6 +8,15 @@ use Test::More;
 
 use Cinnamon::Task;
 
+sub execute : Tests {
+    my $task = Cinnamon::Task->new(
+        name => 'name',
+        code => sub { return $_[0] },
+    );
+    my $res = $task->execute('hostname');
+    is $res, 'hostname';
+}
+
 sub info : Tests {
     my $task = Cinnamon::Task->new(
         name => 'name',
