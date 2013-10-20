@@ -67,7 +67,7 @@ sub run {
 
     Class::Load::load_class $runner;
 
-    my $result = $runner->start($hosts, $task->code);
+    my $result = $runner->start($hosts, $task);
     my (@success, @error);
 
     for my $key (keys %{$result || {}}) {

@@ -13,7 +13,7 @@ sub start {
     my $all_results = {};
     $hosts = [ @$hosts ];
 
-    my $task_name           = CTX->get_param('task');
+    my $task_name           = $task->name;
     my $concurrency_setting = CTX->get_param('concurrency') || {};
     my $concurrency         = $concurrency_setting->{$task_name} || scalar @$hosts;
 
@@ -41,7 +41,7 @@ sub execute {
     my $result = { host => $host, error => 0 };
 
     local $@;
-    eval { $task->($host) };
+    eval { $task->execute($host) };
     if ($@) {
         chomp $@;
         log error => sprintf '[%s] %s', $host, $@;

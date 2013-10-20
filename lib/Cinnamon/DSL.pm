@@ -53,6 +53,11 @@ sub remote (&$) {
     $code->($host);
 }
 
+sub call ($$) {
+    my ($task_name, $host) = @_;
+    CTX->call_task($task_name, $host);
+}
+
 sub run (@) {
     my (@cmd) = @_;
     return CTX->run_cmd(\@cmd);
