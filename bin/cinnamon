@@ -16,10 +16,11 @@ cinnamon - Command Line Interface for Deploy with Cinnamon
 
 =head1 USAGE
 
-    $ cinnamon [options...] <role> <task ...>
+    $ cinnamon [options...] (<role> | --all) <task ...>
 
     -h --help               Display help
     -i --info Display a definition of Role and Task
     -c --config Config path
     -s --set Override parameters which we can get from "get" method provided Cinnamon::DSL
     -I --ignore-errors Cinnamon execute all task, if error occur during execution
+       --all Run tasks on all roles defined in config
