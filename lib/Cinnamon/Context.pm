@@ -33,10 +33,16 @@ has params => (
     default => sub { Hash::MultiValue->new() }
 );
 
+sub load_config {
+    my ($self, $config) = @_;
+
+    Cinnamon::Config::Loader->load(config => $config);
+}
+
 sub run {
     my ($self, $role_name, $task_name, %opts)  = @_;
 
-    Cinnamon::Config::Loader->load(config => $opts{config});
+    $self->load_config($opts{config});
 
     if ($opts{info}) {
         $self->dump_info;
