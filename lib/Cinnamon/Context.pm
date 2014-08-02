@@ -228,7 +228,7 @@ sub dump_info {
 sub _get_sudo_password {
     my ($self) = @_;
     my $password = $self->get_param('password');
-    return $password if $password;
+    return $password if defined $password;
 
     print "Enter sudo password: ";
     ReadMode "noecho";
