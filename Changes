@@ -1,6 +1,7 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+    - Skip sudo password prompt if specifying empty string
 
 0.26 2013-10-20T07:20:22Z
     - add call DSL
