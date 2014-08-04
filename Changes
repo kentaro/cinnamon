@@ -1,6 +1,8 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+
+0.27 2014-08-04T05:23:38Z
     - Skip sudo password prompt if specifying empty string
 
 0.26 2013-10-20T07:20:22Z
