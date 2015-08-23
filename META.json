@@ -4,7 +4,7 @@
       "=over 4"
    ],
    "dynamic_config" : 0,
-   "generated_by" : "Minilla/v2.1.1, CPAN::Meta::Converter version 2.140640",
+   "generated_by" : "Minilla/v2.5.0, CPAN::Meta::Converter version 2.150005",
    "license" : [
       "perl_5"
    ],
@@ -84,7 +84,7 @@
          "web" : "https://github.com/kentaro/cinnamon"
       }
    },
-   "version" : "0.27",
+   "version" : "0.28",
    "x_contributors" : [
       "wakabatan <wakabatan@localhost.localdomain>",
       "hatyuki <hatyuki29@gmail.com>",
@@ -94,6 +94,8 @@
       "TERAOKA Yoshinori <yteraoka@me.com>",
       "mechairoi <ttsujikawa@gmail.com>",
       "punytan <punytan@gmail.com>",
+      "nqounet <mail@nqou.net>",
       "shibayu36 <shibayu36@gmail.com>"
-   ]
+   ],
+   "x_serialization_backend" : "JSON::PP version 2.27203"
 }

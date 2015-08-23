@@ -252,8 +252,8 @@ https://github.com/kentaro/cinnamon
 
 # AUTHOR
 
-- Kentaro Kuribayashi <kentarok@gmail.com>
-- Yuki Shibazaki <shibayu36 at gmail.com>
+- Kentaro Kuribayashi &lt;kentarok@gmail.com>
+- Yuki Shibazaki &lt;shibayu36 at gmail.com>
 
 # SEE ALSO
 
