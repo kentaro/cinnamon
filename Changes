@@ -1,6 +1,8 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+
+0.28 2015-08-23T06:20:47Z
     - Fixed a problem that Cinnamon does not work with Moo version 2.000000 or above
 
 0.27 2014-08-04T05:23:38Z
