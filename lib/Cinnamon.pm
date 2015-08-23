@@ -5,7 +5,7 @@ use 5.010_001;
 
 use parent qw(Exporter);
 
-our $VERSION = '0.27';
+our $VERSION = '0.28';
 
 our @EXPORT = qw(CTX);
 sub CTX { $Cinnamon::Context::CTX };

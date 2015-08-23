@@ -1,6 +1,7 @@
 Revision history for Perl extension Cinnamon
 
 {{$NEXT}}
+    - Fixed a problem that Cinnamon does not work with Moo version 2.000000 or above
 
 0.27 2014-08-04T05:23:38Z
     - Skip sudo password prompt if specifying empty string
