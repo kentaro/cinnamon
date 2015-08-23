@@ -25,6 +25,7 @@ sub run {
         "c|config=s" => \$self->{config},
         "s|set=s%"   => \$self->{override_settings},
         "I|ignore-errors" => \$self->{ignore_errors},
+        "all"        => \$self->{all_roles},
     );
 
     # --help option
@@ -42,9 +43,14 @@ sub run {
     }
 
     # check role and task exists
-    my $role = shift @ARGV;
-    my @tasks = @ARGV;
-    if (!$self->{info} && (!$role || scalar @tasks == 0)) {
+    my ($role, @tasks);
+    if (!$self->{all_roles}) {
+        ($role, @tasks) = @ARGV;
+    }
+    else {
+        @tasks = @ARGV;
+    }
+    if (!$self->{info} && (!($role || $self->{all_roles}) || scalar @tasks == 0)) {
         $self->print("please specify role and task\n");
         $self->usage;
         return ERROR;
@@ -54,15 +60,29 @@ sub run {
     my $error_occured = 0;
     my $context = Cinnamon::Context->new;
     local $Cinnamon::Context::CTX = $context;
-    for my $task (@tasks) {
-        my ($success, $error) = $context->run(
-            $role,
-            $task,
-            config            => $self->{config},
-            override_settings => $self->{override_settings},
-            info              => $self->{info},
-        );
-        last if ($self->{info});
+ T: for my $task (@tasks) {
+        my ($success, $error);
+        my @roles = ();
+
+        # $role can either be a single one, or --all (all defined roles)
+        if ($self->{all_roles}) {
+            $context->load_config($self->{config});
+            @roles = $context->roles->keys;
+        }
+        else {
+            push @roles, $role;
+        }
+
+        for my $r (@roles) {
+            ($success, $error) = $context->run(
+                $r,
+                $task,
+                config            => $self->{config},
+                override_settings => $self->{override_settings},
+                info              => $self->{info},
+            );
+            last T if ($self->{info});
+        }
 
         # check execution error
         $error_occured ||= ! defined $success;
@@ -78,7 +98,7 @@ sub run {
 sub usage {
     my $self = shift;
     my $msg = <<"HELP";
-Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>
+Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] (<role> | --all) <task ...>
 HELP
     $self->print($msg);
 }

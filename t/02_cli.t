@@ -14,7 +14,7 @@ use constant { CLI_SUCCESS => 0, CLI_ERROR => 1 };
 sub _help : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     is $app->run('--help'), CLI_SUCCESS;
-    is $app->system_error, "Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>\n";
+    is $app->system_error, "Usage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] (<role> | --all) <task ...>\n";
 }
 
 sub _info : Tests {
@@ -41,7 +41,7 @@ OUTPUT
 sub _no_config : Tests {
     my $app = Test::Cinnamon::CLI::cli();
     is $app->run('role', 'task'), CLI_ERROR;
-    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] <role> <task ...>\n";
+    is $app->system_error, "cannot find config file for deploy : config/deploy.pl\nUsage: cinnamon [--config=<path>] [--set=<parameter>] [--ignore-errors] [--help] [--info] (<role> | --all) <task ...>\n";
 }
 
 sub _valid : Tests {
@@ -152,6 +152,23 @@ CONFIG
     like $app->system_error, qr{undefined task : 'undef_task'};
     like $app->system_error, qr{app};
     like $app->system_output, qr{deploy_to};
+}
+
+sub _run_task_for_all_roles : Tests {
+    my $app = Test::Cinnamon::CLI::cli();
+    $app->dir->touch("config/deploy.pl", <<CONFIG);
+use Cinnamon::DSL;
+set user      => 'app';
+set deploy_to => '/home/app/deploy_to';
+role foo => 'localhost';
+role bar => '127.0.0.1';
+task echo_user => sub {
+    print("hello " . get('user') . " from " . get('role'));
+};
+CONFIG
+    is $app->run('--all', 'echo_user'), CLI_SUCCESS;
+    like $app->system_output, qr{app from foo};
+    like $app->system_output, qr{app from bar};
 }
 
 __PACKAGE__->runtests;
